@@ -1,1 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConnect - Student Learning Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Favicon - place favicon.ico in media folder -->
+    <link rel="icon" type="image/x-icon" href="media/favicon.ico">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header with Navigation -->
+        <header class="app-header">
+            <div class="logo">
+                <!-- Logo image placeholder - replace with actual logo -->
+                <img src="media/logo.png" alt="ClassConnect Logo" class="logo-img" onerror="this.style.display='none'">
+                <h1>ClassConnect</h1>
+                <span class="tagline">Connect. Learn. Grow.</span>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" data-page="home">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Home
+                </button>
+                <button class="nav-btn" data-page="chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Chat with Peers
+                </button>
+                <button class="nav-btn" data-page="ai">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    AI Assistant
+                </button>
+            </nav>
+        </header>
 
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="welcome-section">
+                    <div class="student-profile" id="student-profile">
+                        <div class="profile-avatar">
+                            <!-- Student photo placeholder - will use media/students/alex-smith.jpg -->
+                            <img src="media/students/alex-smith.jpg" alt="Alex Smith" class="avatar-img" onerror="this.style.display='none'">
+                            <span class="avatar-fallback">AS</span>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="student-name">Alex Smith</h2>
+                            <p>Grade 8 Student</p>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-value">10</span>
+                                <span class="stat-label">Teachers</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">25</span>
+                                <span class="stat-label">Classmates</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">6</span>
+                                <span class="stat-label">Subjects</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teachers-section" id="teachers-section">
+                    <h3 class="section-title">Your Teachers</h3>
+                    <div class="teachers-grid" id="teachers-grid">
+                        <!-- Teachers will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Page -->
+            <div id="chat-page" class="page">
+                <div class="chat-container">
+                    <aside class="chat-sidebar">
+                        <div class="chat-header">
+                            <h3>Classmates</h3>
+                            <button class="filter-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search classmates..." id="search-classmates">
+                        </div>
+                        <div class="classmates-list" id="classmates-list">
+                            <!-- Classmates will be dynamically loaded here -->
+                        </div>
+                    </aside>
+                    <div class="chat-main">
+                        <div class="chat-welcome">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                            </svg>
+                            <h3>Select a classmate to start chatting</h3>
+                            <p>Connect with your peers and collaborate on assignments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant Page -->
+            <div id="ai-page" class="page">
+                <div class="ai-container">
+                    <div class="ai-hero">
+                        <div class="ai-icon">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <h2>AI Study Assistant</h2>
+                        <p class="ai-subtitle">Your intelligent learning companion</p>
+                    </div>
+
+                    <div class="ai-features">
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                                </svg>
+                            </div>
+                            <h4>Homework Helper</h4>
+                            <p>Get instant help with assignments and practice problems</p>
+                            <span class="status-badge">Coming Soon</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                            <h4>Instant Q&A</h4>
+                            <p>Ask questions about any subject and get clear explanations</p>
+                            <span class="status-badge">Coming Soon</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                                </svg>
+                            </div>
+                            <h4>Study Planner</h4>
+                            <p>Create personalized study schedules and track progress</p>
+                            <span class="status-badge">In Development</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <h4>Exam Prep</h4>
+                            <p>Practice tests and comprehensive review materials</p>
+                            <span class="status-badge">In Development</span>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-preview">
+                        <h3>Try AI Assistant (Beta)</h3>
+                        <div class="chat-input-container">
+                            <input type="text" placeholder="Ask me anything about your subjects..." id="ai-input">
+                            <button class="send-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="ai-response-area" id="ai-response">
+                            <div class="sample-response">
+                                <p><strong>Example questions you can ask:</strong></p>
+                                <ul>
+                                    <li>Explain photosynthesis in simple terms</li>
+                                    <li>Help me solve this quadratic equation</li>
+                                    <li>What caused World War I?</li>
+                                    <li>How do I write a compelling essay introduction?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
