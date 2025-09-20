@@ -75,6 +75,34 @@
                     </div>
                 </div>
 
+                <!-- NEW: Calendar & Notes Widgets Row -->
+                <div class="widgets-row">
+                    <!-- Calendar Widget -->
+                    <div class="widget calendar-widget">
+                        <div class="widget-header">
+                            <h3>📅 Upcoming Tests & Quizzes</h3>
+                        </div>
+                        <div class="calendar-events" id="calendar-events">
+                            <!-- Events will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Voice + PDF Notes Widget -->
+                    <div class="widget notes-widget">
+                        <div class="widget-header">
+                            <h3>📝 Take Notes</h3>
+                        </div>
+                        <div class="notes-controls">
+                            <button id="start-recording" class="mic-btn">🎤 Start Recording</button>
+                            <input type="file" id="pdf-upload" accept=".pdf" style="display:none;">
+                            <label for="pdf-upload" class="upload-btn">📄 Upload PDF</label>
+                        </div>
+                        <div class="notes-display" id="notes-display">
+                            <p>Your notes will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="teachers-section" id="teachers-section">
                     <h3 class="section-title">Your Teachers</h3>
                     <div class="teachers-grid" id="teachers-grid">
