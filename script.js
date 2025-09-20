@@ -124,6 +124,15 @@ const classmates = [
     { id: 25, name: "Madison Mitchell", status: "idle", initials: "MM", color: "#5e72e4", image: "media/students/madison-mitchell.jpg" }
 ];
 
+// NEW: Sample upcoming events for calendar
+const upcomingEvents = [
+    { date: "2025-04-15", title: "Math Quiz - Chapter 5" },
+    { date: "2025-04-18", title: "Science Test - Photosynthesis" },
+    { date: "2025-04-22", title: "History Essay Due" },
+    { date: "2025-04-25", title: "English Vocabulary Test" },
+    { date: "2025-04-30", title: "Physics Lab Report" }
+];
+
 // DOM Elements
 const navButtons = document.querySelectorAll('.nav-btn');
 const pages = document.querySelectorAll('.page');
@@ -135,6 +144,12 @@ const searchClassmates = document.getElementById('search-classmates');
 const aiInput = document.getElementById('ai-input');
 const aiResponse = document.getElementById('ai-response');
 
+// NEW: Calendar & Notes elements
+const calendarEventsContainer = document.getElementById('calendar-events');
+const startRecordingBtn = document.getElementById('start-recording');
+const pdfUpload = document.getElementById('pdf-upload');
+const notesDisplay = document.getElementById('notes-display');
+
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     initializeNavigation();
@@ -142,6 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeClassmates();
     initializeStudentProfile();
     initializeAIChat();
+    initializeCalendar(); // NEW
+    initializeNotesWidget(); // NEW
 });
 
 // Navigation functionality
@@ -229,7 +246,7 @@ function createTeacherCard(teacher) {
     return card;
 }
 
-// Show teacher details (placeholder for future functionality)
+// Show teacher details (placeholder)
 function showTeacherDetails(teacher) {
     console.log('Teacher clicked:', teacher.name);
     // Future: Open modal or navigate to teacher's profile
@@ -372,6 +389,94 @@ function handleAIQuery() {
     aiInput.value = '';
 }
 
+// NEW: Initialize Calendar Widget
+function initializeCalendar() {
+    if (!calendarEventsContainer) return;
+
+    calendarEventsContainer.innerHTML = '';
+
+    upcomingEvents.forEach(event => {
+        const eventCard = document.createElement('div');
+        eventCard.className = 'event-card';
+
+        const eventDate = new Date(event.date);
+        const formattedDate = eventDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        eventCard.innerHTML = `
+            <div class="event-date">${formattedDate}</div>
+            <div class="event-title">${event.title}</div>
+        `;
+
+        calendarEventsContainer.appendChild(eventCard);
+    });
+}
+
+// NEW: Initialize Notes Widget
+function initializeNotesWidget() {
+    let recognition;
+    let isRecording = false;
+
+    // Check if browser supports SpeechRecognition
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onresult = function(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            notesDisplay.innerHTML = `<p><strong>Voice Note:</strong><br>${transcript}</p>`;
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error', event.error);
+            notesDisplay.innerHTML = `<p style="color: red;">Error: ${event.error}</p>`;
+        };
+    } else {
+        startRecordingBtn.disabled = true;
+        startRecordingBtn.textContent = "🎤 Speech Not Supported";
+        startRecordingBtn.style.background = "#ccc";
+    }
+
+    // Toggle recording
+    if (startRecordingBtn) {
+        startRecordingBtn.addEventListener('click', () => {
+            if (!recognition) return;
+
+            if (isRecording) {
+                recognition.stop();
+                startRecordingBtn.textContent = "🎤 Start Recording";
+                isRecording = false;
+            } else {
+                recognition.start();
+                startRecordingBtn.textContent = "🛑 Stop Recording";
+                isRecording = true;
+                notesDisplay.innerHTML = "<p>Listening... speak now.</p>";
+            }
+        });
+    }
+
+    // Handle PDF upload
+    if (pdfUpload) {
+        pdfUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                notesDisplay.innerHTML = `<p><strong>📄 PDF Uploaded:</strong><br>${file.name}<br><em>(PDF viewing requires backend integration)</em></p>`;
+            } else if (file) {
+                notesDisplay.innerHTML = `<p style="color: red;">Please upload a valid PDF file.</p>`;
+                pdfUpload.value = ''; // Clear invalid selection
+            }
+        });
+    }
+}
+
 // Utility function to generate random colors
 function getRandomColor() {
     const colors = ['#5e72e4', '#11cdef', '#2dce89', '#fb6340', '#f5365c', '#825ee4'];
@@ -381,7 +486,7 @@ function getRandomColor() {
 // Add some animations on page load
 window.addEventListener('load', () => {
     // Animate elements on load
-    const elements = document.querySelectorAll('.teacher-card, .classmate-item, .feature-card');
+    const elements = document.querySelectorAll('.teacher-card, .classmate-item, .feature-card, .widget');
     elements.forEach((el, index) => {
         setTimeout(() => {
             el.style.animation = 'fadeIn 0.5s ease forwards';
