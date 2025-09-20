@@ -75,7 +75,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Calendar & Notes Widgets Row -->
+                <!-- Calendar & Notes Widgets Row -->
                 <div class="widgets-row">
                     <!-- Calendar Widget -->
                     <div class="widget calendar-widget">
@@ -87,18 +87,24 @@
                         </div>
                     </div>
 
-                    <!-- Voice + PDF Notes Widget -->
+                    <!-- Enhanced Voice + PDF Notes Widget -->
                     <div class="widget notes-widget">
                         <div class="widget-header">
-                            <h3>📝 Take Notes</h3>
+                            <h3>📝 Advanced Note Taker</h3>
                         </div>
                         <div class="notes-controls">
-                            <button id="start-recording" class="mic-btn">🎤 Start Recording</button>
+                            <button id="start-recording" class="mic-btn">🎤 Start</button>
+                            <button id="pause-recording" class="mic-btn" disabled>⏸️ Pause</button>
+                            <button id="save-transcript" class="upload-btn" disabled>💾 Save Note</button>
                             <input type="file" id="pdf-upload" accept=".pdf" style="display:none;">
                             <label for="pdf-upload" class="upload-btn">📄 Upload PDF</label>
                         </div>
                         <div class="notes-display" id="notes-display">
-                            <p>Your notes will appear here...</p>
+                            <p>Click "Start" to begin voice recording. Your transcript will appear here.</p>
+                        </div>
+                        <div class="saved-notes" id="saved-notes">
+                            <h4>Saved Notes</h4>
+                            <ul id="notes-list"></ul>
                         </div>
                     </div>
                 </div>
@@ -111,7 +117,7 @@
                 </div>
             </div>
 
-            <!-- Chat Page -->
+            <!-- Enhanced Chat Page -->
             <div id="chat-page" class="page">
                 <div class="chat-container">
                     <aside class="chat-sidebar">
@@ -138,19 +144,27 @@
                             <!-- Classmates will be dynamically loaded here -->
                         </div>
                     </aside>
-                    <div class="chat-main">
-                        <div class="chat-welcome">
+                    <div class="chat-main" id="chat-main">
+                        <div class="chat-welcome" id="chat-welcome">
                             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
                                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                             </svg>
                             <h3>Select a classmate to start chatting</h3>
                             <p>Connect with your peers and collaborate on assignments</p>
                         </div>
+                        <!-- Chat messages will appear here -->
+                        <div class="chat-messages" id="chat-messages" style="display:none; padding: 20px; overflow-y: auto; flex:1;"></div>
+                        <div class="chat-input-area" id="chat-input-area" style="display:none; padding: 15px; border-top: 1px solid #eee;">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="message-input" placeholder="Type a message..." style="flex:1; padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
+                                <button id="send-message" class="send-btn" style="padding: 10px 20px;">Send</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- AI Assistant Page -->
+            <!-- Enhanced AI Assistant Page -->
             <div id="ai-page" class="page">
                 <div class="ai-container">
                     <div class="ai-hero">
@@ -166,7 +180,7 @@
                     </div>
 
                     <div class="ai-features">
-                        <div class="feature-card">
+                        <div class="feature-card active-feature">
                             <div class="feature-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                     <path d="M9 11l3 3L22 4"></path>
@@ -174,11 +188,10 @@
                                 </svg>
                             </div>
                             <h4>Homework Helper</h4>
-                            <p>Get instant help with assignments and practice problems</p>
-                            <span class="status-badge">Coming Soon</span>
+                            <p>Get step-by-step solutions and explanations</p>
                         </div>
 
-                        <div class="feature-card">
+                        <div class="feature-card active-feature">
                             <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
@@ -187,22 +200,20 @@
                                 </svg>
                             </div>
                             <h4>Instant Q&A</h4>
-                            <p>Ask questions about any subject and get clear explanations</p>
-                            <span class="status-badge">Coming Soon</span>
+                            <p>Ask anything and get detailed answers instantly</p>
                         </div>
 
-                        <div class="feature-card">
+                        <div class="feature-card active-feature">
                             <div class="feature-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                                 </svg>
                             </div>
                             <h4>Study Planner</h4>
-                            <p>Create personalized study schedules and track progress</p>
-                            <span class="status-badge">In Development</span>
+                            <p>Personalized schedules based on your goals</p>
                         </div>
 
-                        <div class="feature-card">
+                        <div class="feature-card active-feature">
                             <div class="feature-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -213,16 +224,15 @@
                                 </svg>
                             </div>
                             <h4>Exam Prep</h4>
-                            <p>Practice tests and comprehensive review materials</p>
-                            <span class="status-badge">In Development</span>
+                            <p>Adaptive practice with instant feedback</p>
                         </div>
                     </div>
 
                     <div class="ai-chat-preview">
-                        <h3>Try AI Assistant (Beta)</h3>
+                        <h3>Ask me anything...</h3>
                         <div class="chat-input-container">
-                            <input type="text" placeholder="Ask me anything about your subjects..." id="ai-input">
-                            <button class="send-btn">
+                            <input type="text" placeholder="e.g., Help me with quadratic equations or What caused WWII?" id="ai-input">
+                            <button class="send-btn" id="ai-send-btn">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="22" y1="2" x2="11" y2="13"></line>
                                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -231,13 +241,29 @@
                         </div>
                         <div class="ai-response-area" id="ai-response">
                             <div class="sample-response">
-                                <p><strong>Example questions you can ask:</strong></p>
+                                <p><strong>Try asking:</strong></p>
                                 <ul>
-                                    <li>Explain photosynthesis in simple terms</li>
-                                    <li>Help me solve this quadratic equation</li>
-                                    <li>What caused World War I?</li>
-                                    <li>How do I write a compelling essay introduction?</li>
+                                    <li>“Help me solve 3x² + 5x - 2 = 0”</li>
+                                    <li>“Explain the water cycle”</li>
+                                    <li>“Quiz me on World War II causes”</li>
+                                    <li>“Create a study plan for my math test next week”</li>
                                 </ul>
+                            </div>
+                        </div>
+
+                        <!-- Practice Problems Section (Hidden by default) -->
+                        <div class="practice-section" id="practice-section" style="display: none; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 15px;">
+                            <h3 id="practice-title">Practice Problems</h3>
+                            <div id="problem-container" style="margin: 20px 0; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <!-- Problem will be inserted here -->
+                            </div>
+                            <div id="answer-input-area" style="margin: 20px 0;">
+                                <input type="text" id="student-answer" placeholder="Enter your answer" style="width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <button id="submit-answer" class="send-btn" style="padding: 10px 20px; margin-left: 10px;">Submit</button>
+                            </div>
+                            <div id="feedback-area" style="margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                            <div id="progress-area" style="margin-top: 15px; font-weight: 500;">
+                                Problem <span id="current-problem">1</span> of 10
                             </div>
                         </div>
                     </div>
