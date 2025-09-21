@@ -28,6 +28,44 @@ body {
     min-height: 100vh;
 }
 
+/* Notifications Bar */
+.notifications-bar {
+    background: #fff3cd;
+    border-bottom: 2px solid #ffeaa7;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #856404;
+}
+
+.notification-icon {
+    font-size: 18px;
+}
+
+.dismiss-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #856404;
+    font-weight: bold;
+}
+
+.dismiss-btn:hover {
+    color: #333;
+}
+
 .app-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -127,7 +165,7 @@ body {
 
 /* Home Page Styles */
 .welcome-section {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .student-profile {
@@ -228,6 +266,61 @@ body {
     letter-spacing: 1px;
 }
 
+/* Detailed Scan Widget */
+.scan-widget {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.scan-widget .widget-header h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.scan-results {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.scan-item {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.scan-item.urgent {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+}
+
+.scan-item.upcoming {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+}
+
+.scan-item.future {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+    color: white;
+}
+
+.scan-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.scan-value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
 /* Widgets Row */
 .widgets-row {
     display: flex;
@@ -288,6 +381,11 @@ body {
     gap: 10px;
     margin-bottom: 15px;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+#youtube-url {
+    min-width: 200px;
 }
 
 .mic-btn, .upload-btn {
@@ -647,6 +745,7 @@ body {
     padding: 10px 15px;
     border-radius: 15px;
     font-size: 14px;
+    position: relative;
 }
 
 .message.received {
@@ -662,11 +761,11 @@ body {
     border-bottom-right-radius: 5px;
 }
 
-.chat-input-area {
-    padding: 15px;
-    border-top: 1px solid #eee;
-    background: white;
-    border-radius: 0 0 15px 15px;
+.message-time {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 5px;
+    text-align: right;
 }
 
 /* Enhanced AI Page Styles */
@@ -679,7 +778,7 @@ body {
 
 .ai-hero {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 
 .ai-icon {
@@ -705,47 +804,36 @@ body {
     color: var(--gray);
 }
 
-.ai-features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    margin-bottom: 50px;
+/* AI Mode Selector */
+.ai-mode-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    justify-content: center;
 }
 
-.feature-card {
+.mode-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
     background: var(--light-gray);
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
+    color: var(--dark);
+    cursor: pointer;
+    font-weight: 500;
     transition: all 0.3s ease;
 }
 
-.feature-card:hover, .feature-card.active-feature {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
+.mode-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
 }
 
-.feature-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 15px;
-}
-
-.feature-card h4 {
-    font-size: 18px;
-    color: var(--dark);
-    margin-bottom: 10px;
-}
-
-.feature-card p {
-    font-size: 14px;
-    color: var(--gray);
-    line-height: 1.6;
-    margin-bottom: 15px;
+.mode-btn.active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    transform: translateY(-2px);
 }
 
 .ai-chat-preview {
@@ -847,8 +935,93 @@ body {
     color: var(--warning-color);
 }
 
+/* Persistent Saved Notes Panel */
+.saved-notes-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.panel-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: var(--light-gray);
+}
+
+#global-notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#global-notes-list li {
+    padding: 10px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+#global-notes-list li:hover {
+    background: var(--light-gray);
+    border-color: var(--primary-color);
+}
+
+#no-notes-message {
+    text-align: center;
+    color: var(--gray);
+    font-style: italic;
+    padding: 20px 0;
+    margin: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+    .notifications-bar {
+        padding: 8px 15px;
+    }
+    
     .app-header {
         flex-direction: column;
         gap: 20px;
@@ -885,6 +1058,11 @@ body {
     
     .profile-stats {
         margin-left: 0;
+        gap: 20px;
+    }
+    
+    .scan-results {
+        flex-direction: column;
     }
     
     .widgets-row {
@@ -910,16 +1088,15 @@ body {
         max-height: 300px;
     }
     
-    .ai-features {
-        grid-template-columns: 1fr;
-    }
-
-    .notes-controls {
+    .ai-mode-selector {
         flex-direction: column;
         align-items: stretch;
     }
-
-    .chat-messages {
-        padding: 15px;
+    
+    .saved-notes-panel {
+        width: 90%;
+        max-width: 400px;
+        bottom: 10px;
+        right: 5%;
     }
 }
