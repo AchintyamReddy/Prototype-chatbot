@@ -9,17 +9,15 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Real-Time Notifications Container -->
-        <div class="notifications-container" id="notifications-container">
-            <!-- Notifications will appear here dynamically -->
-        </div>
+        <!-- Real-Time Notifications -->
+        <div class="notifications-container" id="notifications-container"></div>
 
-        <!-- Header with Navigation -->
+        <!-- Header -->
         <header class="app-header">
             <div class="logo">
                 <img src="media/logo.png" alt="ClassConnect Logo" class="logo-img" onerror="this.style.display='none'">
                 <h1>ClassConnect</h1>
-                <span class="tagline">Learn, Grow, Succeed.</span> <!-- Updated motto -->
+                <span class="tagline">Learn, Grow, Succeed.</span>
             </div>
             <nav class="main-nav">
                 <button class="nav-btn active" data-page="home">
@@ -34,6 +32,15 @@
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Chat with Peers
+                </button>
+                <button class="nav-btn" data-page="teachers">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Chat with Teachers
                 </button>
                 <button class="nav-btn" data-page="ai">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,7 +63,6 @@
             </nav>
         </header>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             <!-- Home Page -->
             <div id="home-page" class="page active">
@@ -108,19 +114,15 @@
                     </div>
                 </div>
 
-                <!-- Calendar & Notes Widgets Row -->
+                <!-- Calendar & Notes Widgets -->
                 <div class="widgets-row">
-                    <!-- Calendar Widget -->
                     <div class="widget calendar-widget">
                         <div class="widget-header">
                             <h3>📅 Upcoming Tests & Quizzes</h3>
                         </div>
-                        <div class="calendar-events" id="calendar-events">
-                            <!-- Events will be populated by JS -->
-                        </div>
+                        <div class="calendar-events" id="calendar-events"></div>
                     </div>
 
-                    <!-- Enhanced Voice + PDF Notes Widget -->
                     <div class="widget notes-widget">
                         <div class="widget-header">
                             <h3>📝 Advanced Note Taker</h3>
@@ -129,49 +131,33 @@
                             <button id="start-recording" class="mic-btn">🎤 Start</button>
                             <button id="pause-recording" class="mic-btn" disabled>⏸️ Pause</button>
                             <button id="save-transcript" class="upload-btn" disabled>💾 Save Note</button>
-                            <input type="text" id="youtube-url" placeholder="Paste YouTube URL" style="flex:1; padding: 8px; margin: 0 5px; border: 1px solid #ddd; border-radius: 5px;">
+                            <input type="text" id="youtube-url" placeholder="Paste YouTube URL">
                             <button id="extract-audio" class="upload-btn">▶️ Extract Audio</button>
                         </div>
                         <div class="notes-display" id="notes-display">
-                            <p>Click "Start" to begin voice recording. Paste YouTube URL to extract audio for notes.</p>
+                            <p>Type "I need more help" or "Explain this to me" in AI for adaptive learning!</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="teachers-section" id="teachers-section">
                     <h3 class="section-title">Your Teachers</h3>
-                    <div class="teachers-grid" id="teachers-grid">
-                        <!-- Teachers will be dynamically loaded here -->
-                    </div>
+                    <div class="teachers-grid" id="teachers-grid"></div>
                 </div>
             </div>
 
-            <!-- Enhanced Chat Page -->
+            <!-- Chat with Peers -->
             <div id="chat-page" class="page">
                 <div class="chat-container">
                     <aside class="chat-sidebar">
                         <div class="chat-header">
                             <h3>Classmates</h3>
-                            <button class="filter-btn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                                </svg>
-                            </button>
+                            <button id="create-group" class="filter-btn">➕ Create Group</button>
                         </div>
                         <div class="search-box">
                             <input type="text" placeholder="Search classmates..." id="search-classmates">
                         </div>
-                        <div class="chat-sessions" id="chat-sessions">
-                            <!-- Chat sessions will be populated here -->
-                        </div>
+                        <div class="chat-sessions" id="chat-sessions"></div>
                     </aside>
                     <div class="chat-main" id="chat-main">
                         <div class="chat-welcome" id="chat-welcome">
@@ -181,18 +167,52 @@
                             <h3>Select a classmate to start chatting</h3>
                             <p>Connect with your peers and collaborate on assignments</p>
                         </div>
-                        <div class="chat-messages" id="chat-messages" style="display:none; padding: 20px; overflow-y: auto; flex:1;"></div>
-                        <div class="chat-input-area" id="chat-input-area" style="display:none; padding: 15px; border-top: 1px solid #eee;">
+                        <div class="chat-messages" id="chat-messages" style="display:none;"></div>
+                        <div class="chat-input-area" id="chat-input-area" style="display:none;">
                             <div style="display: flex; gap: 10px;">
-                                <input type="text" id="message-input" placeholder="Type a message..." style="flex:1; padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
-                                <button id="send-message" class="send-btn" style="padding: 10px 20px;">Send</button>
+                                <input type="text" id="message-input" placeholder="Type a message...">
+                                <button id="send-message" class="send-btn">Send</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Enhanced AI Assistant Page -->
+            <!-- Chat with Teachers -->
+            <div id="teachers-page" class="page">
+                <div class="chat-container">
+                    <aside class="chat-sidebar">
+                        <div class="chat-header">
+                            <h3>Your Teachers</h3>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search teachers..." id="search-teachers">
+                        </div>
+                        <div class="chat-sessions" id="teacher-sessions"></div>
+                    </aside>
+                    <div class="chat-main" id="teacher-chat-main">
+                        <div class="chat-welcome" id="teacher-chat-welcome">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <h3>Select a teacher to ask questions</h3>
+                            <p>Get help with assignments, clarify concepts, or discuss grades</p>
+                        </div>
+                        <div class="chat-messages" id="teacher-chat-messages" style="display:none;"></div>
+                        <div class="chat-input-area" id="teacher-chat-input-area" style="display:none;">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="teacher-message-input" placeholder="Type your question...">
+                                <button id="send-teacher-message" class="send-btn">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant -->
             <div id="ai-page" class="page">
                 <div class="ai-container">
                     <div class="ai-hero">
@@ -204,55 +224,19 @@
                             </svg>
                         </div>
                         <h2>AI Study Assistant</h2>
-                        <p class="ai-subtitle">Your intelligent learning companion</p>
+                        <p class="ai-subtitle">Adapts to your learning needs</p>
                     </div>
 
-                    <!-- AI Mode Selector -->
                     <div class="ai-mode-selector">
-                        <button class="mode-btn active" data-mode="homework">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 12l2 2 4-4"></path>
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
-                            </svg>
-                            📚 Homework Helper
-                        </button>
-                        <button class="mode-btn" data-mode="qna">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            ❓ Instant Q&A
-                        </button>
-                        <button class="mode-btn" data-mode="planner">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            🗓️ Study Planner
-                        </button>
-                        <button class="mode-btn" data-mode="exam">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            🧪 Exam Prep
-                        </button>
-                    </div>
-
-                    <div class="ai-mode-description" id="ai-mode-description">
-                        <p>📚 <strong>Homework Helper:</strong> Get step-by-step solutions and explanations for your assignments.</p>
+                        <button class="mode-btn active" data-mode="adaptive">🧠 Adaptive Tutor</button>
+                        <button class="mode-btn" data-mode="homework">📚 Homework Helper</button>
+                        <button class="mode-btn" data-mode="exam">🧪 Exam Generator</button>
                     </div>
 
                     <div class="ai-chat-preview">
                         <h3>Ask me anything...</h3>
                         <div class="chat-input-container">
-                            <input type="text" placeholder="e.g., Help me solve quadratic equations" id="ai-input">
+                            <input type="text" placeholder="Try: 'I need more help' or 'Explain this to me'" id="ai-input">
                             <button class="send-btn" id="ai-send-btn">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -262,61 +246,64 @@
                         </div>
                         <div class="ai-response-area" id="ai-response">
                             <div class="sample-response">
-                                <p><strong>Try asking in Homework Helper mode:</strong></p>
+                                <p><strong>Try these prompts:</strong></p>
                                 <ul>
-                                    <li>“Help me solve 3x² + 5x - 2 = 0”</li>
-                                    <li>“Explain the Pythagorean theorem”</li>
-                                    <li>“How do I write a thesis statement?”</li>
+                                    <li>“I need more help with this topic”</li>
+                                    <li>“Can you explain this more to me?”</li>
+                                    <li>“Make it harder - I want a challenge!”</li>
+                                    <li>“Give me a practice test on quadratic equations”</li>
+                                    <li>“I don't understand this at all - start from basics”</li>
                                 </ul>
                             </div>
                         </div>
 
-                        <!-- Practice Problems Section -->
-                        <div class="practice-section" id="practice-section" style="display: none; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 15px;">
-                            <h3 id="practice-title">Practice Problems</h3>
-                            <div id="problem-container" style="margin: 20px 0; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                                <!-- Problem will be inserted here -->
+                        <!-- Practice Test Section -->
+                        <div class="practice-section" id="practice-section" style="display: none;">
+                            <h3 id="practice-title">Practice Test</h3>
+                            <div id="problem-container"></div>
+                            <div id="answer-input-area">
+                                <input type="text" id="student-answer" placeholder="Enter your answer">
+                                <button id="submit-answer" class="send-btn">Submit</button>
                             </div>
-                            <div id="answer-input-area" style="margin: 20px 0;">
-                                <input type="text" id="student-answer" placeholder="Enter your answer" style="width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                                <button id="submit-answer" class="send-btn" style="padding: 10px 20px; margin-left: 10px;">Submit</button>
-                            </div>
-                            <div id="feedback-area" style="margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
-                            <div id="progress-area" style="margin-top: 15px; font-weight: 500;">
-                                Problem <span id="current-problem">1</span> of 10
+                            <div id="feedback-area"></div>
+                            <div id="progress-area">
+                                Question <span id="current-problem">1</span> of 10
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Saved Notes Page -->
+            <!-- Saved Notes -->
             <div id="notes-page" class="page">
                 <div class="notes-page-container">
                     <div class="notes-header">
-                        <h2>📁 Saved Notes</h2>
+                        <h2>📁 Saved Notes by Subject</h2>
                         <div class="notes-actions">
-                            <input type="text" id="search-notes" placeholder="Search notes..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; margin-right: 10px;">
-                            <button id="clear-all-notes" class="upload-btn">🗑️ Clear All</button>
+                            <input type="text" id="search-notes" placeholder="Search notes...">
+                            <button id="generate-practice-test" class="upload-btn">📝 Generate Practice Test</button>
                         </div>
                     </div>
-                    <div class="notes-list-container" id="notes-list-container">
-                        <!-- Notes will be populated here -->
-                        <div class="no-notes-message" id="no-notes-message">
-                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#8898aa" stroke-width="1.5">
-                                <line x1="4" y1="4" x2="20" y2="4"></line>
-                                <line x1="4" y1="8" x2="20" y2="8"></line>
-                                <line x1="4" y1="12" x2="12" y2="12"></line>
-                                <line x1="4" y1="16" x2="16" y2="16"></line>
-                                <line x1="4" y1="20" x2="20" y2="20"></line>
-                            </svg>
-                            <h3>No saved notes yet</h3>
-                            <p>Start recording voice notes or extract audio from videos to save them here.</p>
-                        </div>
+                    <div class="subjects-container" id="subjects-container">
+                        <!-- Subjects will be populated here -->
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Create Study Group Modal -->
+    <div class="modal" id="group-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Study Group</h2>
+            <input type="text" id="group-name" placeholder="Group Name" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 5px; padding: 10px; margin: 10px 0;">
+                <h4>Select Members:</h4>
+                <div id="member-checkboxes"></div>
+            </div>
+            <button id="create-group-btn" class="upload-btn" style="width: 100%;">Create Group</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
