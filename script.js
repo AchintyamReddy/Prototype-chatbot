@@ -1,5 +1,5 @@
 // ClassConnect - Ultimate Educational Platform
-// Features: Adaptive AI, Teacher Chats, Subject-Organized Notes, Practice Tests
+// Features: Streak System, Weekly Calendar, Enhanced Notes, Full-width Chat Input
 
 const teachers = [
     { id: 1, name: "Dr. Sarah Johnson", subjects: ["Math", "Physics"], grade: "Grade 8", initials: "SJ", color: "#5e72e4", image: "media/teachers/sarah-johnson.jpg" },
@@ -15,9 +15,20 @@ const classmates = [
     { id: 4, name: "Noah Taylor", status: "offline", initials: "NT", color: "#fb6340", image: "media/students/noah-taylor.jpg" }
 ];
 
-const upcomingEvents = [
-    { date: "2025-04-15", title: "Math Quiz - Chapter 5", daysUntil: 3 },
-    { date: "2025-04-18", title: "Science Test - Photosynthesis", daysUntil: 5 }
+// Sample events for calendar (you can expand this)
+const allEvents = [
+    { date: "2025-04-10", title: "Math Quiz - Chapter 3", subject: "math", type: "quiz" },
+    { date: "2025-04-12", title: "Science Lab Report Due", subject: "science", type: "assignment" },
+    { date: "2025-04-14", title: "English Essay Draft", subject: "english", type: "assignment" },
+    { date: "2025-04-15", title: "History Test - Ancient Civilizations", subject: "history", type: "test" },
+    { date: "2025-04-17", title: "Math Homework - Algebra", subject: "math", type: "homework" },
+    { date: "2025-04-18", title: "Science Test - Photosynthesis", subject: "science", type: "test" },
+    { date: "2025-04-21", title: "English Vocabulary Quiz", subject: "english", type: "quiz" },
+    { date: "2025-04-23", title: "History Project Presentation", subject: "history", type: "project" },
+    { date: "2025-04-25", title: "Math Test - Geometry", subject: "math", type: "test" },
+    { date: "2025-04-28", title: "Science Experiment Write-up", subject: "science", type: "assignment" },
+    { date: "2025-05-02", title: "English Final Draft Due", subject: "english", type: "assignment" },
+    { date: "2025-05-05", title: "History Quiz - World War I", subject: "history", type: "quiz" }
 ];
 
 const problemBanks = {
@@ -84,13 +95,29 @@ const aiSendBtn = document.getElementById('ai-send-btn');
 const modeButtons = document.querySelectorAll('.mode-btn');
 
 // Home page elements
-const calendarEventsContainer = document.getElementById('calendar-events');
+const prevWeekBtn = document.getElementById('prev-week');
+const nextWeekBtn = document.getElementById('next-week');
+const currentWeekDisplay = document.getElementById('current-week-display');
+const weeklyCalendar = document.getElementById('weekly-calendar');
 const startRecordingBtn = document.getElementById('start-recording');
 const pauseRecordingBtn = document.getElementById('pause-recording');
 const saveTranscriptBtn = document.getElementById('save-transcript');
-const youtubeUrl = document.getElementById('youtube-url');
-const extractAudioBtn = document.getElementById('extract-audio');
 const notesDisplay = document.getElementById('notes-display');
+const typedNotes = document.getElementById('typed-notes');
+const saveTypedNoteBtn = document.getElementById('save-typed-note');
+const noteSubject = document.getElementById('note-subject');
+const voiceNoteSubject = document.getElementById('voice-note-subject');
+const uploadNoteSubject = document.getElementById('upload-note-subject');
+const articleUrl = document.getElementById('article-url');
+const extractContentBtn = document.getElementById('extract-content');
+const uploadDisplay = document.getElementById('upload-display');
+const tabButtons = document.querySelectorAll('.tab-btn');
+
+// Streak elements
+const currentStreakElement = document.getElementById('current-streak');
+const streakModal = document.getElementById('streak-modal');
+const closeStreakBtn = document.getElementById('close-streak');
+const confettiContainer = document.getElementById('confetti-container');
 
 // Chat elements
 const chatSessions = document.getElementById('chat-sessions');
@@ -152,10 +179,15 @@ let chatHistory = {};
 let teacherChatHistory = {};
 let notificationInterval = null;
 let lastNotificationId = 0;
-let difficultyLevel = 0; // 0=easy, 1=medium, 2=hard
+let difficultyLevel = 0;
+let currentDate = new Date();
+let streakCount = parseInt(localStorage.getItem('classConnectStreak') || '0');
+let lastActiveDate = localStorage.getItem('classConnectLastActive');
+let hasShownTodayNotification = false;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+    initializeStreakSystem();
     initializeNavigation();
     initializeTeachers();
     initializeClassmates();
@@ -168,7 +200,96 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeRealTimeNotifications();
     initializeGroupModal();
     updateNotesDisplay();
+    checkStreakMilestone();
 });
+
+// Streak System
+function initializeStreakSystem() {
+    // Update streak display
+    currentStreakElement.textContent = streakCount;
+    
+    // Check if we need to reset or increment streak
+    const today = new Date().toDateString();
+    if (lastActiveDate) {
+        const lastDate = new Date(lastActiveDate);
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (lastDate.toDateString() === yesterday.toDateString()) {
+            // Consecutive day - keep streak going
+        } else if (lastDate.toDateString() !== today) {
+            // More than one day gap - reset streak
+            streakCount = 0;
+            localStorage.setItem('classConnectStreak', '0');
+            currentStreakElement.textContent = '0';
+        }
+    }
+    
+    // Record today as active
+    localStorage.setItem('classConnectLastActive', today);
+    
+    // Add activity listeners
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', recordActivity);
+    });
+    
+    // Record activity on page interactions
+    document.addEventListener('click', recordActivity);
+    document.addEventListener('keypress', recordActivity);
+}
+
+function recordActivity() {
+    const today = new Date().toDateString();
+    const lastActive = localStorage.getItem('classConnectLastActive');
+    
+    if (lastActive !== today) {
+        streakCount++;
+        localStorage.setItem('classConnectStreak', streakCount.toString());
+        localStorage.setItem('classConnectLastActive', today);
+        currentStreakElement.textContent = streakCount;
+        checkStreakMilestone();
+    }
+}
+
+function checkStreakMilestone() {
+    if (streakCount > 0 && streakCount % 10 === 0) {
+        showStreakCelebration(streakCount);
+    }
+}
+
+function showStreakCelebration(days) {
+    streakModal.style.display = 'block';
+    document.getElementById('streak-count').textContent = days;
+    
+    // Create confetti
+    createConfetti();
+    
+    closeStreakBtn.onclick = () => {
+        streakModal.style.display = 'none';
+    };
+    
+    // Close if clicked outside
+    window.addEventListener('click', (event) => {
+        if (event.target === streakModal) {
+            streakModal.style.display = 'none';
+        }
+    });
+}
+
+function createConfetti() {
+    confettiContainer.innerHTML = '';
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+    
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 5) + 's';
+        confettiContainer.appendChild(confetti);
+    }
+}
 
 // Navigation
 function initializeNavigation() {
@@ -179,6 +300,9 @@ function initializeNavigation() {
             
             navButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
+            
+            // Record activity
+            recordActivity();
         });
     });
 }
@@ -200,6 +324,9 @@ function switchPage(pageName) {
     } else if (pageName === 'notes') {
         renderNotesBySubject();
     }
+    
+    // Record activity
+    recordActivity();
 }
 
 // Student Profile
@@ -212,6 +339,7 @@ function initializeStudentProfile() {
                     teachersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
+            recordActivity();
         });
     }
 }
@@ -247,6 +375,7 @@ function createTeacherCard(teacher) {
     `;
     card.addEventListener('click', () => {
         alert(`Viewing ${teacher.name}'s profile - Feature coming soon!`);
+        recordActivity();
     });
     return card;
 }
@@ -269,6 +398,7 @@ function initializeClassmates() {
         createGroupBtn.addEventListener('click', () => {
             groupModal.style.display = 'block';
             populateMemberCheckboxes();
+            recordActivity();
         });
     }
 }
@@ -322,6 +452,7 @@ function createChatSession(classmate) {
         session.classList.add('active');
         currentClassmate = classmate;
         showChatInterface(classmate);
+        recordActivity();
     });
     
     return session;
@@ -342,10 +473,13 @@ function showChatInterface(classmate) {
     
     sendMessageBtn.onclick = () => sendMessage(classmate.id, false);
     messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             sendMessage(classmate.id, false);
         }
     });
+    
+    recordActivity();
 }
 
 function renderChatHistory(classmateId) {
@@ -376,6 +510,12 @@ function sendMessage(classmateId, isTeacher = false) {
     
     renderChatSessions();
     
+    // Show notification for new message (simulated)
+    if (Math.random() > 0.5 && !hasShownTodayNotification) {
+        showNotification("New Message", `${isTeacher ? 'Teacher' : 'Classmate'} replied to your message!`, "💬");
+        hasShownTodayNotification = true;
+    }
+    
     setTimeout(() => {
         const responses = [
             "That's a great point!",
@@ -404,6 +544,8 @@ function sendMessage(classmateId, isTeacher = false) {
         if (isTeacher) {
             renderTeacherSessions();
         }
+        
+        recordActivity();
     }, 1000);
 }
 
@@ -484,6 +626,7 @@ function createTeacherSession(teacher) {
         session.classList.add('active');
         currentTeacher = teacher;
         showTeacherChatInterface(teacher);
+        recordActivity();
     });
     
     return session;
@@ -505,44 +648,161 @@ function showTeacherChatInterface(teacher) {
     
     sendTeacherMessageBtn.onclick = () => sendMessage(teacher.id, true);
     teacherMessageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             sendMessage(teacher.id, true);
         }
     });
+    
+    recordActivity();
 }
 
 function renderTeacherChatHistory(teacherId) {
     teacherChatMessages.innerHTML = '';
-    const sortedMessages = [...teacherChatHistory[teacherId]].sort((a, b) => a.time - b.time);
+    const sortedMessages = [...teacherChatHistory[teacher.id]].sort((a, b) => a.time - b.time);
     sortedMessages.forEach(message => {
         addMessageToChat(message.text, message.type, message.time, true);
     });
     setTimeout(() => { teacherChatMessages.scrollTop = teacherChatMessages.scrollHeight; }, 100);
 }
 
-// Calendar
+// Calendar with Weekly View
 function initializeCalendar() {
-    if (!calendarEventsContainer) return;
-    calendarEventsContainer.innerHTML = '';
-    upcomingEvents.forEach(event => {
-        const eventCard = document.createElement('div');
-        eventCard.className = 'event-card';
-        const eventDate = new Date(event.date);
-        const formattedDate = eventDate.toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric'
+    if (!weeklyCalendar) return;
+    
+    // Set up navigation buttons
+    if (prevWeekBtn) {
+        prevWeekBtn.addEventListener('click', () => {
+            currentDate.setDate(currentDate.getDate() - 7);
+            renderCalendar();
+            recordActivity();
         });
-        eventCard.innerHTML = `
-            <div class="event-date">${formattedDate}</div>
-            <div class="event-title">${event.title}</div>
+    }
+    
+    if (nextWeekBtn) {
+        nextWeekBtn.addEventListener('click', () => {
+            currentDate.setDate(currentDate.getDate() + 7);
+            renderCalendar();
+            recordActivity();
+        });
+    }
+    
+    renderCalendar();
+}
+
+function renderCalendar() {
+    if (!weeklyCalendar) return;
+    
+    // Get start of week (Sunday)
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+    
+    // Update display
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    currentWeekDisplay.textContent = `📅 Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    
+    // Clear calendar
+    weeklyCalendar.innerHTML = '';
+    
+    // Create day columns
+    for (let i = 0; i < 7; i++) {
+        const dayDate = new Date(startOfWeek);
+        dayDate.setDate(startOfWeek.getDate() + i);
+        
+        const dayColumn = document.createElement('div');
+        dayColumn.className = 'day-column';
+        
+        // Check if today
+        const isToday = dayDate.toDateString() === new Date().toDateString();
+        const dayHeaderClass = isToday ? 'day-header today' : 'day-header';
+        
+        dayColumn.innerHTML = `
+            <div class="${dayHeaderClass}">
+                <div class="day-name">${dayDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div class="day-date">${dayDate.getDate()}</div>
+            </div>
+            <div class="day-events" id="day-events-${formatDate(dayDate)}"></div>
         `;
-        calendarEventsContainer.appendChild(eventCard);
+        
+        weeklyCalendar.appendChild(dayColumn);
+    }
+    
+    // Add events to days
+    allEvents.forEach(event => {
+        const eventDate = new Date(event.date);
+        const eventDay = eventDate.getDay();
+        const eventStartOfWeek = new Date(eventDate);
+        eventStartOfWeek.setDate(eventDate.getDate() - eventDate.getDay());
+        
+        // Check if event is in current week
+        if (eventStartOfWeek.getTime() === startOfWeek.getTime()) {
+            const eventsContainer = document.getElementById(`day-events-${formatDate(eventDate)}`);
+            if (eventsContainer) {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event-item';
+                eventElement.innerHTML = `
+                    <div style="font-weight: bold; color: var(--dark);">${event.title}</div>
+                    <div style="font-size: 11px; color: var(--gray);">${event.subject}</div>
+                `;
+                eventsContainer.appendChild(eventElement);
+                
+                // Show notification for upcoming tests within 5 days
+                const today = new Date();
+                const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+                if (daysUntil >= 0 && daysUntil <= 5 && event.type === 'test' && !hasShownTodayNotification) {
+                    showNotification("Upcoming Test", `${event.title} in ${daysUntil} days!`, "⚠️");
+                    hasShownTodayNotification = true;
+                }
+            }
+        }
     });
 }
 
-// Notes Widget
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// Notes Widget with Multiple Input Methods
 function initializeNotesWidget() {
+    // Set up tab switching
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const tabId = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            recordActivity();
+        });
+    });
+    
+    // Typed notes
+    if (saveTypedNoteBtn) {
+        saveTypedNoteBtn.addEventListener('click', () => {
+            const content = typedNotes.value.trim();
+            if (!content) {
+                alert('Please enter some notes first!');
+                return;
+            }
+            
+            const subject = noteSubject.value;
+            if (subject === 'general') {
+                alert('Please select a subject for your notes!');
+                return;
+            }
+            
+            saveNote(content, 'Typed Note', subject);
+            typedNotes.value = '';
+            noteSubject.value = 'general';
+        });
+    }
+    
+    // Speech Recognition
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
@@ -577,75 +837,128 @@ function initializeNotesWidget() {
         startRecordingBtn.textContent = "🎤 Not Supported";
     }
 
-    startRecordingBtn.addEventListener('click', () => {
-        if (!recognition) return;
-        if (isRecording) {
-            recognition.stop();
-            startRecordingBtn.textContent = "🎤 Start";
-            pauseRecordingBtn.disabled = true;
-            isRecording = false;
-            isPaused = false;
-        } else {
-            recognition.start();
-            startRecordingBtn.textContent = "⏹️ Stop";
-            pauseRecordingBtn.disabled = false;
-            isRecording = true;
-            isPaused = false;
-            currentTranscript = '';
-            notesDisplay.innerHTML = "<p>🎙️ Listening... speak now.</p>";
-            saveTranscriptBtn.disabled = true;
-        }
-    });
+    if (startRecordingBtn) {
+        startRecordingBtn.addEventListener('click', () => {
+            if (!recognition) return;
+            if (isRecording) {
+                recognition.stop();
+                startRecordingBtn.textContent = "🎤 Start";
+                pauseRecordingBtn.disabled = true;
+                isRecording = false;
+                isPaused = false;
+            } else {
+                recognition.start();
+                startRecordingBtn.textContent = "⏹️ Stop";
+                pauseRecordingBtn.disabled = false;
+                isRecording = true;
+                isPaused = false;
+                currentTranscript = '';
+                notesDisplay.innerHTML = "<p>🎙️ Listening... speak now.</p>";
+                saveTranscriptBtn.disabled = true;
+            }
+            recordActivity();
+        });
+    }
 
-    pauseRecordingBtn.addEventListener('click', () => {
-        if (isPaused) {
-            isPaused = false;
-            pauseRecordingBtn.textContent = "⏸️ Pause";
-            notesDisplay.innerHTML += "<p style='color: green; margin-top: 10px;'>▶️ Resumed recording</p>";
-        } else {
-            isPaused = true;
-            pauseRecordingBtn.textContent = "▶️ Resume";
-            notesDisplay.innerHTML += "<p style='color: orange; margin-top: 10px;'>⏸️ Paused recording</p>";
-        }
-    });
+    if (pauseRecordingBtn) {
+        pauseRecordingBtn.addEventListener('click', () => {
+            if (isPaused) {
+                isPaused = false;
+                pauseRecordingBtn.textContent = "⏸️ Pause";
+                notesDisplay.innerHTML += "<p style='color: green; margin-top: 10px;'>▶️ Resumed recording</p>";
+            } else {
+                isPaused = true;
+                pauseRecordingBtn.textContent = "▶️ Resume";
+                notesDisplay.innerHTML += "<p style='color: orange; margin-top: 10px;'>⏸️ Paused recording</p>";
+            }
+            recordActivity();
+        });
+    }
 
-    saveTranscriptBtn.addEventListener('click', () => {
-        if (!currentTranscript) return;
-        const subject = detectSubjectFromText(currentTranscript);
-        saveNote(currentTranscript, 'Voice Note', subject);
-    });
+    if (saveTranscriptBtn) {
+        saveTranscriptBtn.addEventListener('click', () => {
+            if (!currentTranscript) return;
+            const subject = voiceNoteSubject.value;
+            if (subject === 'general') {
+                alert('Please select a subject for your voice note!');
+                return;
+            }
+            saveNote(currentTranscript, 'Voice Note', subject);
+        });
+    }
 
-    extractAudioBtn.addEventListener('click', () => {
-        const url = youtubeUrl.value.trim();
-        if (!url) {
-            notesDisplay.innerHTML = "<p style='color: red;'>Please enter a YouTube URL</p>";
-            return;
-        }
-        
-        notesDisplay.innerHTML = "<p>🔍 Analyzing video... (simulated)</p>";
-        
-        setTimeout(() => {
-            const fakeTranscript = `Extracted audio from: ${url.substring(0, 50)}...
-Key points discussed:
-- Main concept 1: Brief summary
-- Main concept 2: Brief summary
-- Important terms: term1, term2, term3
-- Conclusion: Brief wrap-up`;
+    // Content extraction from URLs
+    if (extractContentBtn) {
+        extractContentBtn.addEventListener('click', () => {
+            const url = articleUrl.value.trim();
+            if (!url) {
+                alert('Please enter a URL first!');
+                return;
+            }
             
-            const subject = detectSubjectFromText(fakeTranscript);
-            saveNote(fakeTranscript, 'YouTube Audio Extract', subject);
-            youtubeUrl.value = '';
-        }, 2000);
-    });
+            uploadDisplay.innerHTML = "<p>🔍 Analyzing content... (simulated)</p>";
+            
+            setTimeout(() => {
+                // Simulate content extraction based on URL type
+                let extractedContent = "";
+                let subject = uploadNoteSubject.value;
+                
+                if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                    extractedContent = `Extracted key points from video: ${url.substring(0, 50)}...
+• Main concept 1: Brief summary of first key point
+• Main concept 2: Brief summary of second key point
+• Important terms: term1, term2, term3
+• Conclusion: Brief wrap-up of video content`;
+                    
+                    if (subject === 'general') {
+                        subject = detectSubjectFromUrl(url);
+                    }
+                } else if (url.includes('twitter.com') || url.includes('facebook.com') || url.includes('instagram.com')) {
+                    extractedContent = `Extracted educational content from social media post: ${url.substring(0, 50)}...
+• Key insight: Brief summary of educational content
+• Related concept: Connection to academic subject
+• Follow-up question: What would you like to explore further?`;
+                    
+                    if (subject === 'general') {
+                        subject = 'other';
+                    }
+                } else {
+                    extractedContent = `Extracted key information from article: ${url.substring(0, 50)}...
+• Main topic: Brief overview of article subject
+• Key points: 
+  1. First important point
+  2. Second important point
+  3. Third important point
+• Summary: Brief conclusion of article content`;
+                    
+                    if (subject === 'general') {
+                        subject = detectSubjectFromUrl(url);
+                    }
+                }
+                
+                if (subject === 'general') {
+                    alert('Please select a subject for your extracted note!');
+                    uploadDisplay.innerHTML = "<p>Paste a link to extract key points and save as notes.</p>";
+                    return;
+                }
+                
+                saveNote(extractedContent, 'Extracted Content', subject);
+                articleUrl.value = '';
+                uploadNoteSubject.value = 'general';
+            }, 2000);
+            
+            recordActivity();
+        });
+    }
 }
 
-function detectSubjectFromText(text) {
-    text = text.toLowerCase();
-    if (text.includes('math') || text.includes('equation') || text.includes('algebra') || text.includes('calculus')) return 'math';
-    if (text.includes('science') || text.includes('biology') || text.includes('chemistry') || text.includes('physics')) return 'science';
-    if (text.includes('english') || text.includes('literature') || text.includes('writing') || text.includes('grammar')) return 'english';
-    if (text.includes('history') || text.includes('geography') || text.includes('social') || text.includes('world war')) return 'history';
-    return 'general';
+function detectSubjectFromUrl(url) {
+    url = url.toLowerCase();
+    if (url.includes('math') || url.includes('algebra') || url.includes('calculus') || url.includes('geometry')) return 'math';
+    if (url.includes('science') || url.includes('biology') || url.includes('chemistry') || url.includes('physics')) return 'science';
+    if (url.includes('english') || url.includes('literature') || url.includes('writing') || url.includes('grammar')) return 'english';
+    if (url.includes('history') || url.includes('geography') || url.includes('social') || url.includes('world war')) return 'history';
+    return 'other';
 }
 
 function saveNote(content, type, subject = 'general') {
@@ -661,9 +974,22 @@ function saveNote(content, type, subject = 'general') {
     localStorage.setItem('classConnectNotes', JSON.stringify(savedNotes));
     updateNotesDisplay();
     
-    notesDisplay.innerHTML = `<p>✅ ${type} saved in ${subject} section!</p>`;
-    currentTranscript = '';
-    saveTranscriptBtn.disabled = true;
+    // Show success message based on input method
+    if (type === 'Typed Note') {
+        typedNotes.value = '';
+        noteSubject.value = 'general';
+    } else if (type === 'Voice Note') {
+        notesDisplay.innerHTML = `<p>✅ ${type} saved in ${subject} section!</p>`;
+        currentTranscript = '';
+        saveTranscriptBtn.disabled = true;
+        voiceNoteSubject.value = 'general';
+    } else if (type === 'Extracted Content') {
+        uploadDisplay.innerHTML = `<p>✅ ${type} saved in ${subject} section!</p>`;
+        articleUrl.value = '';
+        uploadNoteSubject.value = 'general';
+    }
+    
+    recordActivity();
 }
 
 function updateNotesDisplay() {
@@ -675,12 +1001,31 @@ function updateNotesDisplay() {
             li.textContent = `${note.timestamp}: ${note.content.substring(0, 30)}${note.content.length > 30 ? '...' : ''}`;
             li.title = note.content;
             li.addEventListener('click', () => {
-                notesDisplay.innerHTML = `<p><strong>📝 ${note.type} (${note.timestamp}):</strong><br>${note.content}</p>`;
+                // Show note in appropriate tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-tab="${getActiveTab()}"]`).classList.add('active');
+                
+                if (getActiveTab() === 'type') {
+                    typedNotes.value = note.content;
+                } else if (getActiveTab() === 'speak') {
+                    notesDisplay.innerHTML = `<p><strong>📝 ${note.type} (${note.timestamp}):</strong><br>${note.content}</p>`;
+                } else {
+                    uploadDisplay.innerHTML = `<p><strong>📝 ${note.type} (${note.timestamp}):</strong><br>${note.content}</p>`;
+                }
             });
             notesList.appendChild(li);
         });
     }
     renderNotesBySubject();
+}
+
+function getActiveTab() {
+    for (let btn of tabButtons) {
+        if (btn.classList.contains('active')) {
+            return btn.getAttribute('data-tab');
+        }
+    }
+    return 'type';
 }
 
 // AI Assistant
@@ -690,6 +1035,7 @@ function initializeAIAssistant() {
             modeButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentAIMode = btn.getAttribute('data-mode');
+            recordActivity();
         });
     });
     
@@ -758,6 +1104,16 @@ function handleAIQuery() {
     }
     
     aiInput.value = '';
+    recordActivity();
+}
+
+function detectSubjectFromText(text) {
+    text = text.toLowerCase();
+    if (text.includes('math') || text.includes('equation') || text.includes('algebra') || text.includes('calculus')) return 'math';
+    if (text.includes('science') || text.includes('biology') || text.includes('chemistry') || text.includes('physics')) return 'science';
+    if (text.includes('english') || text.includes('literature') || text.includes('writing') || text.includes('grammar')) return 'english';
+    if (text.includes('history') || text.includes('geography') || text.includes('social') || text.includes('world war')) return 'history';
+    return 'general';
 }
 
 function generateHelpResponse(subject) {
@@ -856,7 +1212,7 @@ function submitAnswer() {
             difficultyLevel--;
         }
         
-        // Reorder problems to put easier ones first based on difficulty level
+        // Reorder problems to put easier ones first based on difficulty
         reorderProblemsByDifficulty();
         
         setTimeout(() => {
@@ -864,6 +1220,8 @@ function submitAnswer() {
             studentAnswer.focus();
         }, 3000);
     }
+    
+    recordActivity();
 }
 
 function reorderProblemsByDifficulty() {
@@ -942,6 +1300,8 @@ function initializeNotesPage() {
                 practiceTitle.textContent = `Practice Test - ${mostCommonSubject.charAt(0).toUpperCase() + mostCommonSubject.slice(1)}`;
                 loadNextProblem();
             }, 1500);
+            
+            recordActivity();
         });
     }
 }
@@ -951,6 +1311,12 @@ function renderNotesBySubject(searchTerm = '') {
     
     // Group notes by subject
     const notesBySubject = {};
+    const subjects = ['math', 'science', 'english', 'history', 'other', 'general'];
+    
+    subjects.forEach(subject => {
+        notesBySubject[subject] = [];
+    });
+    
     savedNotes.forEach(note => {
         if (!notesBySubject[note.subject]) {
             notesBySubject[note.subject] = [];
@@ -968,17 +1334,8 @@ function renderNotesBySubject(searchTerm = '') {
         }
     }
     
-    // Remove empty subjects
-    for (const subject in notesBySubject) {
-        if (notesBySubject[subject].length === 0) {
-            delete notesBySubject[subject];
-        }
-    }
-    
     // Sort subjects by note count (descending)
-    const sortedSubjects = Object.keys(notesBySubject).sort((a, b) => 
-        notesBySubject[b].length - notesBySubject[a].length
-    );
+    const sortedSubjects = subjects.filter(subject => notesBySubject[subject].length > 0);
     
     if (sortedSubjects.length === 0) {
         subjectsContainer.innerHTML = `
@@ -991,7 +1348,7 @@ function renderNotesBySubject(searchTerm = '') {
                     <line x1="4" y1="20" x2="20" y2="20"></line>
                 </svg>
                 <h3>No saved notes yet</h3>
-                <p>Start recording voice notes or extract audio from videos to save them here.</p>
+                <p>Start recording voice notes, typing notes, or extracting content from links to save them here.</p>
             </div>
         `;
         return;
@@ -1000,15 +1357,18 @@ function renderNotesBySubject(searchTerm = '') {
     subjectsContainer.innerHTML = '';
     
     sortedSubjects.forEach(subject => {
+        const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
         const subjectSection = document.createElement('div');
         subjectSection.className = 'subject-section';
         
         subjectSection.innerHTML = `
             <div class="subject-header">
-                <h3 class="subject-title">${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                <h3 class="subject-title">${subjectName}</h3>
                 <span class="subject-count">${notesBySubject[subject].length} notes</span>
             </div>
-            <div class="notes-grid" id="notes-grid-${subject}">
+            <div class="subject-content" id="subject-content-${subject}">
+                <div class="notes-grid" id="notes-grid-${subject}">
+                </div>
             </div>
         `;
         
@@ -1032,6 +1392,15 @@ function renderNotesBySubject(searchTerm = '') {
             
             notesGrid.appendChild(noteCard);
         });
+        
+        // Add event listener to subject header for toggling
+        const subjectHeader = subjectSection.querySelector('.subject-header');
+        const subjectContent = subjectSection.querySelector('.subject-content');
+        
+        subjectHeader.addEventListener('click', () => {
+            subjectContent.style.display = subjectContent.style.display === 'none' ? 'block' : 'none';
+            recordActivity();
+        });
     });
     
     // Add event listeners to delete buttons
@@ -1042,6 +1411,7 @@ function renderNotesBySubject(searchTerm = '') {
             localStorage.setItem('classConnectNotes', JSON.stringify(savedNotes));
             renderNotesBySubject(searchTerm);
             updateNotesDisplay();
+            recordActivity();
         });
     });
 }
@@ -1081,6 +1451,7 @@ function initializeGroupModal() {
             groupNameInput.value = '';
             
             // In a real app, you'd create a new group chat here
+            recordActivity();
         });
     }
 }
@@ -1103,35 +1474,8 @@ function populateMemberCheckboxes() {
 
 // Real-Time Notifications
 function initializeRealTimeNotifications() {
-    showInitialNotifications();
-    notificationInterval = setInterval(() => {
-        showSimulatedNotification();
-    }, 30000);
-}
-
-function showInitialNotifications() {
-    upcomingEvents.forEach(event => {
-        if (event.daysUntil <= 5) {
-            showNotification(
-                "Upcoming Test Alert",
-                `${event.title} is in ${event.daysUntil} days!`,
-                "⚠️"
-            );
-        }
-    });
-}
-
-function showSimulatedNotification() {
-    const notifications = [
-        { title: "Study Reminder", message: "Don't forget to review your math notes today!", icon: "📚" },
-        { title: "New Message", message: "Emma sent you a message about the group project.", icon: "💬" },
-        { title: "AI Tip", message: "Try asking the AI Assistant about photosynthesis today!", icon: "🤖" },
-        { title: "Progress Update", message: "You've completed 5/10 practice problems in math!", icon: "📈" },
-        { title: "Encouragement", message: "Great job studying today! Keep up the good work!", icon: "🌟" }
-    ];
-    
-    const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
-    showNotification(randomNotification.title, randomNotification.message, randomNotification.icon);
+    // We'll show notifications based on actual events and messages
+    // No need for interval since we trigger notifications contextually
 }
 
 function showNotification(title, message, icon) {
@@ -1188,12 +1532,6 @@ window.addEventListener('load', () => {
     });
 });
 
-window.addEventListener('beforeunload', () => {
-    if (notificationInterval) {
-        clearInterval(notificationInterval);
-    }
-});
-
 console.log('%c🎓 ClassConnect - ULTIMATE Version', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
-console.log('%cNow with: Adaptive AI, Teacher Chats, Subject-Organized Notes, Practice Tests', 'color: #825ee4; font-size: 14px;');
-console.log('%cVersion 5.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
+console.log('%cNow with: Streak System, Weekly Calendar, Enhanced Notes, Full-width Chat Input', 'color: #825ee4; font-size: 14px;');
+console.log('%cVersion 6.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
