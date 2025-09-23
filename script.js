@@ -1,11 +1,17 @@
-// ClassConnect - Ultimate Educational Platform
-// Features: Streak System, Weekly Calendar, Enhanced Notes, Full-width Chat Input
+// ClassConnect - Compact & Accessible Version
+// Features: Compact Widgets, Interchangeable AI Modules, Enhanced Calendar
 
 const teachers = [
     { id: 1, name: "Dr. Sarah Johnson", subjects: ["Math", "Physics"], grade: "Grade 8", initials: "SJ", color: "#5e72e4", image: "media/teachers/sarah-johnson.jpg" },
     { id: 2, name: "Prof. Michael Chen", subjects: ["Biology", "Chemistry"], grade: "Grade 8", initials: "MC", color: "#11cdef", image: "media/teachers/michael-chen.jpg" },
     { id: 3, name: "Ms. Emily Rodriguez", subjects: ["English", "Literature"], grade: "Grade 8", initials: "ER", color: "#2dce89", image: "media/teachers/emily-rodriguez.jpg" },
-    { id: 4, name: "Mr. James Williams", subjects: ["History", "Geography"], grade: "Grade 8", initials: "JW", color: "#fb6340", image: "media/teachers/james-williams.jpg" }
+    { id: 4, name: "Mr. James Williams", subjects: ["History", "Geography"], grade: "Grade 8", initials: "JW", color: "#fb6340", image: "media/teachers/james-williams.jpg" },
+    { id: 5, name: "Mrs. Priya Patel", subjects: ["Math", "Statistics"], grade: "Grade 8", initials: "PP", color: "#f5365c", image: "media/teachers/priya-patel.jpg" },
+    { id: 6, name: "Dr. Robert Thompson", subjects: ["Computer Science", "Robotics"], grade: "Grade 8", initials: "RT", color: "#825ee4", image: "media/teachers/robert-thompson.jpg" },
+    { id: 7, name: "Ms. Maria Garcia", subjects: ["Spanish", "French"], grade: "Grade 8", initials: "MG", color: "#5e72e4", image: "media/teachers/maria-garcia.jpg" },
+    { id: 8, name: "Mr. David Kim", subjects: ["Physical Education", "Health"], grade: "Grade 8", initials: "DK", color: "#11cdef", image: "media/teachers/david-kim.jpg" },
+    { id: 9, name: "Mrs. Linda Brown", subjects: ["Art", "Design"], grade: "Grade 8", initials: "LB", color: "#2dce89", image: "media/teachers/linda-brown.jpg" },
+    { id: 10, name: "Dr. Ahmed Hassan", subjects: ["Geography", "Environmental Science"], grade: "Grade 8", initials: "AH", color: "#fb6340", image: "media/teachers/ahmed-hassan.jpg" }
 ];
 
 const classmates = [
@@ -15,20 +21,18 @@ const classmates = [
     { id: 4, name: "Noah Taylor", status: "offline", initials: "NT", color: "#fb6340", image: "media/students/noah-taylor.jpg" }
 ];
 
-// Sample events for calendar (you can expand this)
+// Sample events for calendar
 const allEvents = [
-    { date: "2025-04-10", title: "Math Quiz - Chapter 3", subject: "math", type: "quiz" },
-    { date: "2025-04-12", title: "Science Lab Report Due", subject: "science", type: "assignment" },
-    { date: "2025-04-14", title: "English Essay Draft", subject: "english", type: "assignment" },
-    { date: "2025-04-15", title: "History Test - Ancient Civilizations", subject: "history", type: "test" },
-    { date: "2025-04-17", title: "Math Homework - Algebra", subject: "math", type: "homework" },
-    { date: "2025-04-18", title: "Science Test - Photosynthesis", subject: "science", type: "test" },
-    { date: "2025-04-21", title: "English Vocabulary Quiz", subject: "english", type: "quiz" },
-    { date: "2025-04-23", title: "History Project Presentation", subject: "history", type: "project" },
-    { date: "2025-04-25", title: "Math Test - Geometry", subject: "math", type: "test" },
-    { date: "2025-04-28", title: "Science Experiment Write-up", subject: "science", type: "assignment" },
-    { date: "2025-05-02", title: "English Final Draft Due", subject: "english", type: "assignment" },
-    { date: "2025-05-05", title: "History Quiz - World War I", subject: "history", type: "quiz" }
+    { date: "2025-04-10", title: "Math Quiz", subject: "math", type: "quiz" },
+    { date: "2025-04-12", title: "Science Lab Report", subject: "science", type: "assignment" },
+    { date: "2025-04-14", title: "English Essay", subject: "english", type: "assignment" },
+    { date: "2025-04-15", title: "History Test", subject: "history", type: "test" },
+    { date: "2025-04-17", title: "Math Homework", subject: "math", type: "homework" },
+    { date: "2025-04-18", title: "Science Test", subject: "science", type: "test" },
+    { date: "2025-04-21", title: "English Quiz", subject: "english", type: "quiz" },
+    { date: "2025-04-23", title: "History Project", subject: "history", type: "project" },
+    { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" },
+    { date: "2025-04-28", title: "Science Write-up", subject: "science", type: "assignment" }
 ];
 
 const problemBanks = {
@@ -92,13 +96,13 @@ const searchClassmates = document.getElementById('search-classmates');
 const aiInput = document.getElementById('ai-input');
 const aiResponse = document.getElementById('ai-response');
 const aiSendBtn = document.getElementById('ai-send-btn');
-const modeButtons = document.querySelectorAll('.mode-btn');
+const moduleButtons = document.querySelectorAll('.module-btn');
 
 // Home page elements
 const prevWeekBtn = document.getElementById('prev-week');
 const nextWeekBtn = document.getElementById('next-week');
 const currentWeekDisplay = document.getElementById('current-week-display');
-const weeklyCalendar = document.getElementById('weekly-calendar');
+const compactCalendar = document.getElementById('compact-calendar');
 const startRecordingBtn = document.getElementById('start-recording');
 const pauseRecordingBtn = document.getElementById('pause-recording');
 const saveTranscriptBtn = document.getElementById('save-transcript');
@@ -174,7 +178,7 @@ let savedNotes = JSON.parse(localStorage.getItem('classConnectNotes') || '[]');
 let currentTopic = '';
 let currentProblemIndex = 0;
 let currentProblems = [];
-let currentAIMode = 'adaptive';
+let currentAIModule = 'homework';
 let chatHistory = {};
 let teacherChatHistory = {};
 let notificationInterval = null;
@@ -203,13 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStreakMilestone();
 });
 
-// Streak System
+// Streak System (same as before)
 function initializeStreakSystem() {
-    // Update streak display
+    const today = new Date().toDateString();
     currentStreakElement.textContent = streakCount;
     
-    // Check if we need to reset or increment streak
-    const today = new Date().toDateString();
     if (lastActiveDate) {
         const lastDate = new Date(lastActiveDate);
         const yesterday = new Date();
@@ -225,15 +227,12 @@ function initializeStreakSystem() {
         }
     }
     
-    // Record today as active
     localStorage.setItem('classConnectLastActive', today);
     
     // Add activity listeners
     navButtons.forEach(btn => {
         btn.addEventListener('click', recordActivity);
     });
-    
-    // Record activity on page interactions
     document.addEventListener('click', recordActivity);
     document.addEventListener('keypress', recordActivity);
 }
@@ -260,15 +259,12 @@ function checkStreakMilestone() {
 function showStreakCelebration(days) {
     streakModal.style.display = 'block';
     document.getElementById('streak-count').textContent = days;
-    
-    // Create confetti
     createConfetti();
     
     closeStreakBtn.onclick = () => {
         streakModal.style.display = 'none';
     };
     
-    // Close if clicked outside
     window.addEventListener('click', (event) => {
         if (event.target === streakModal) {
             streakModal.style.display = 'none';
@@ -300,8 +296,6 @@ function initializeNavigation() {
             
             navButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            
-            // Record activity
             recordActivity();
         });
     });
@@ -325,7 +319,6 @@ function switchPage(pageName) {
         renderNotesBySubject();
     }
     
-    // Record activity
     recordActivity();
 }
 
@@ -344,43 +337,39 @@ function initializeStudentProfile() {
     }
 }
 
-// Teachers Grid
+// Teachers Grid - Compact Version
 function initializeTeachers() {
     if (teachersGrid) {
         teachersGrid.innerHTML = '';
         teachers.forEach(teacher => {
-            const teacherCard = createTeacherCard(teacher);
+            const teacherCard = createCompactTeacherCard(teacher);
             teachersGrid.appendChild(teacherCard);
         });
     }
 }
 
-function createTeacherCard(teacher) {
+function createCompactTeacherCard(teacher) {
     const card = document.createElement('div');
-    card.className = 'teacher-card';
+    card.className = 'compact-teacher-card';
+    
     card.innerHTML = `
-        <div class="teacher-header">
-            <div class="teacher-avatar" style="background: ${teacher.color}">
-                <img src="${teacher.image}" alt="${teacher.name}" class="teacher-avatar-img" onerror="this.style.display='none'">
-                <span style="position: relative; z-index: 1;">${teacher.initials}</span>
-            </div>
-            <div class="teacher-info">
-                <h4>${teacher.name}</h4>
-                <span class="grade">${teacher.grade}</span>
-            </div>
+        <div class="compact-teacher-avatar" style="background: ${teacher.color}">
+            <img src="${teacher.image}" alt="${teacher.name}" class="compact-teacher-avatar-img" onerror="this.style.display='none'">
+            <span style="position: relative; z-index: 1;">${teacher.initials}</span>
         </div>
-        <div class="subject-tags">
-            ${teacher.subjects.map(subject => `<span class="subject-tag">${subject}</span>`).join('')}
-        </div>
+        <div class="compact-teacher-name">${teacher.name}</div>
+        <div class="compact-teacher-subjects">${teacher.subjects[0]}</div>
     `;
+    
     card.addEventListener('click', () => {
-        alert(`Viewing ${teacher.name}'s profile - Feature coming soon!`);
+        alert(`Viewing ${teacher.name}'s profile`);
         recordActivity();
     });
+    
     return card;
 }
 
-// Classmates Chat
+// Classmates Chat (same as before)
 function initializeClassmates() {
     renderChatSessions();
     
@@ -503,14 +492,13 @@ function sendMessage(classmateId, isTeacher = false) {
         addMessageToChat(text, 'sent', now, true);
         teacherMessageInput.value = '';
     } else {
-        chatHistory[classmateId].push(messageObj);
+        chatHistory[classmate.id].push(messageObj);
         addMessageToChat(text, 'sent', now, false);
         messageInput.value = '';
     }
     
     renderChatSessions();
     
-    // Show notification for new message (simulated)
     if (Math.random() > 0.5 && !hasShownTodayNotification) {
         showNotification("New Message", `${isTeacher ? 'Teacher' : 'Classmate'} replied to your message!`, "💬");
         hasShownTodayNotification = true;
@@ -536,7 +524,7 @@ function sendMessage(classmateId, isTeacher = false) {
             teacherChatHistory[classmateId].push(responseObj);
             addMessageToChat(randomResponse, 'received', new Date(), true);
         } else {
-            chatHistory[classmateId].push(responseObj);
+            chatHistory[classmate.id].push(responseObj);
             addMessageToChat(randomResponse, 'received', new Date(), false);
         }
         
@@ -562,7 +550,7 @@ function formatTime(date) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// Teacher Chats
+// Teacher Chats (same as before)
 function initializeTeacherChats() {
     renderTeacherSessions();
     
@@ -666,15 +654,14 @@ function renderTeacherChatHistory(teacherId) {
     setTimeout(() => { teacherChatMessages.scrollTop = teacherChatMessages.scrollHeight; }, 100);
 }
 
-// Calendar with Weekly View
+// Compact Calendar with Weekly Navigation
 function initializeCalendar() {
-    if (!weeklyCalendar) return;
+    if (!compactCalendar) return;
     
-    // Set up navigation buttons
     if (prevWeekBtn) {
         prevWeekBtn.addEventListener('click', () => {
             currentDate.setDate(currentDate.getDate() - 7);
-            renderCalendar();
+            renderCompactCalendar();
             recordActivity();
         });
     }
@@ -682,50 +669,45 @@ function initializeCalendar() {
     if (nextWeekBtn) {
         nextWeekBtn.addEventListener('click', () => {
             currentDate.setDate(currentDate.getDate() + 7);
-            renderCalendar();
+            renderCompactCalendar();
             recordActivity();
         });
     }
     
-    renderCalendar();
+    renderCompactCalendar();
 }
 
-function renderCalendar() {
-    if (!weeklyCalendar) return;
+function renderCompactCalendar() {
+    if (!compactCalendar) return;
     
-    // Get start of week (Sunday)
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
     
-    // Update display
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    currentWeekDisplay.textContent = `📅 Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    currentWeekDisplay.textContent = `📅 Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
     
-    // Clear calendar
-    weeklyCalendar.innerHTML = '';
+    compactCalendar.innerHTML = '';
     
-    // Create day columns
     for (let i = 0; i < 7; i++) {
         const dayDate = new Date(startOfWeek);
         dayDate.setDate(startOfWeek.getDate() + i);
         
         const dayColumn = document.createElement('div');
-        dayColumn.className = 'day-column';
+        dayColumn.className = 'compact-day-column';
         
-        // Check if today
         const isToday = dayDate.toDateString() === new Date().toDateString();
-        const dayHeaderClass = isToday ? 'day-header today' : 'day-header';
+        const dayHeaderClass = isToday ? 'compact-day-header today' : 'compact-day-header';
         
         dayColumn.innerHTML = `
             <div class="${dayHeaderClass}">
-                <div class="day-name">${dayDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                <div class="day-date">${dayDate.getDate()}</div>
+                <div class="compact-day-name">${dayDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div class="compact-day-date">${dayDate.getDate()}</div>
             </div>
-            <div class="day-events" id="day-events-${formatDate(dayDate)}"></div>
+            <div class="compact-day-events" id="compact-day-events-${formatDate(dayDate)}"></div>
         `;
         
-        weeklyCalendar.appendChild(dayColumn);
+        compactCalendar.appendChild(dayColumn);
     }
     
     // Add events to days
@@ -735,22 +717,19 @@ function renderCalendar() {
         const eventStartOfWeek = new Date(eventDate);
         eventStartOfWeek.setDate(eventDate.getDate() - eventDate.getDay());
         
-        // Check if event is in current week
         if (eventStartOfWeek.getTime() === startOfWeek.getTime()) {
-            const eventsContainer = document.getElementById(`day-events-${formatDate(eventDate)}`);
+            const eventsContainer = document.getElementById(`compact-day-events-${formatDate(eventDate)}`);
             if (eventsContainer) {
                 const eventElement = document.createElement('div');
-                eventElement.className = 'event-item';
-                eventElement.innerHTML = `
-                    <div style="font-weight: bold; color: var(--dark);">${event.title}</div>
-                    <div style="font-size: 11px; color: var(--gray);">${event.subject}</div>
-                `;
+                eventElement.className = `compact-event-item ${event.type}`;
+                eventElement.title = `${event.title} (${event.subject})`;
+                eventElement.textContent = event.title;
                 eventsContainer.appendChild(eventElement);
                 
                 // Show notification for upcoming tests within 5 days
                 const today = new Date();
                 const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-                if (daysUntil >= 0 && daysUntil <= 5 && event.type === 'test' && !hasShownTodayNotification) {
+                if (daysUntil >= 0 && daysUntil <= 5 && (event.type === 'test' || event.type === 'quiz') && !hasShownTodayNotification) {
                     showNotification("Upcoming Test", `${event.title} in ${daysUntil} days!`, "⚠️");
                     hasShownTodayNotification = true;
                 }
@@ -763,9 +742,8 @@ function formatDate(date) {
     return date.toISOString().split('T')[0];
 }
 
-// Notes Widget with Multiple Input Methods
+// Compact Notes Widget
 function initializeNotesWidget() {
-    // Set up tab switching
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             tabButtons.forEach(b => b.classList.remove('active'));
@@ -781,7 +759,6 @@ function initializeNotesWidget() {
         });
     });
     
-    // Typed notes
     if (saveTypedNoteBtn) {
         saveTypedNoteBtn.addEventListener('click', () => {
             const content = typedNotes.value.trim();
@@ -802,7 +779,7 @@ function initializeNotesWidget() {
         });
     }
     
-    // Speech Recognition
+    // Speech Recognition (same as before)
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
@@ -887,7 +864,6 @@ function initializeNotesWidget() {
         });
     }
 
-    // Content extraction from URLs
     if (extractContentBtn) {
         extractContentBtn.addEventListener('click', () => {
             const url = articleUrl.value.trim();
@@ -899,37 +875,33 @@ function initializeNotesWidget() {
             uploadDisplay.innerHTML = "<p>🔍 Analyzing content... (simulated)</p>";
             
             setTimeout(() => {
-                // Simulate content extraction based on URL type
                 let extractedContent = "";
                 let subject = uploadNoteSubject.value;
                 
                 if (url.includes('youtube.com') || url.includes('youtu.be')) {
                     extractedContent = `Extracted key points from video: ${url.substring(0, 50)}...
-• Main concept 1: Brief summary of first key point
-• Main concept 2: Brief summary of second key point
-• Important terms: term1, term2, term3
-• Conclusion: Brief wrap-up of video content`;
+• Main concept 1: Brief summary
+• Main concept 2: Brief summary
+• Important terms: term1, term2, term3`;
                     
                     if (subject === 'general') {
                         subject = detectSubjectFromUrl(url);
                     }
                 } else if (url.includes('twitter.com') || url.includes('facebook.com') || url.includes('instagram.com')) {
-                    extractedContent = `Extracted educational content from social media post: ${url.substring(0, 50)}...
-• Key insight: Brief summary of educational content
-• Related concept: Connection to academic subject
-• Follow-up question: What would you like to explore further?`;
+                    extractedContent = `Extracted educational content from social media: ${url.substring(0, 50)}...
+• Key insight: Brief summary
+• Related concept: Connection to academic subject`;
                     
                     if (subject === 'general') {
                         subject = 'other';
                     }
                 } else {
                     extractedContent = `Extracted key information from article: ${url.substring(0, 50)}...
-• Main topic: Brief overview of article subject
+• Main topic: Brief overview
 • Key points: 
   1. First important point
   2. Second important point
-  3. Third important point
-• Summary: Brief conclusion of article content`;
+  3. Third important point`;
                     
                     if (subject === 'general') {
                         subject = detectSubjectFromUrl(url);
@@ -954,10 +926,10 @@ function initializeNotesWidget() {
 
 function detectSubjectFromUrl(url) {
     url = url.toLowerCase();
-    if (url.includes('math') || url.includes('algebra') || url.includes('calculus') || url.includes('geometry')) return 'math';
-    if (url.includes('science') || url.includes('biology') || url.includes('chemistry') || url.includes('physics')) return 'science';
-    if (url.includes('english') || url.includes('literature') || url.includes('writing') || url.includes('grammar')) return 'english';
-    if (url.includes('history') || url.includes('geography') || url.includes('social') || url.includes('world war')) return 'history';
+    if (url.includes('math') || url.includes('algebra') || url.includes('calculus')) return 'math';
+    if (url.includes('science') || url.includes('biology') || url.includes('chemistry')) return 'science';
+    if (url.includes('english') || url.includes('literature') || url.includes('writing')) return 'english';
+    if (url.includes('history') || url.includes('geography') || url.includes('social')) return 'history';
     return 'other';
 }
 
@@ -974,7 +946,6 @@ function saveNote(content, type, subject = 'general') {
     localStorage.setItem('classConnectNotes', JSON.stringify(savedNotes));
     updateNotesDisplay();
     
-    // Show success message based on input method
     if (type === 'Typed Note') {
         typedNotes.value = '';
         noteSubject.value = 'general';
@@ -1001,7 +972,6 @@ function updateNotesDisplay() {
             li.textContent = `${note.timestamp}: ${note.content.substring(0, 30)}${note.content.length > 30 ? '...' : ''}`;
             li.title = note.content;
             li.addEventListener('click', () => {
-                // Show note in appropriate tab
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 document.querySelector(`[data-tab="${getActiveTab()}"]`).classList.add('active');
                 
@@ -1028,13 +998,13 @@ function getActiveTab() {
     return 'type';
 }
 
-// AI Assistant
+// AI Assistant with Interchangeable Modules
 function initializeAIAssistant() {
-    modeButtons.forEach(btn => {
+    moduleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            modeButtons.forEach(b => b.classList.remove('active'));
+            moduleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentAIMode = btn.getAttribute('data-mode');
+            currentAIModule = btn.getAttribute('data-module');
             recordActivity();
         });
     });
@@ -1058,37 +1028,65 @@ function handleAIQuery() {
     practiceSection.style.display = 'none';
     aiResponse.innerHTML = '<p>🤔 Thinking...</p>';
     
-    // Detect student needs from query
     const lowerQuery = query.toLowerCase();
     let response = '';
     let shouldGenerateTest = false;
     let subject = detectSubjectFromText(query);
     
-    if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand') || lowerQuery.includes('confused')) {
-        difficultyLevel = 0; // Reset to easy
-        response = generateHelpResponse(subject);
-    } else if (lowerQuery.includes('explain') || lowerQuery.includes('teach me') || lowerQuery.includes('show me')) {
-        difficultyLevel = 1; // Medium difficulty
-        response = generateExplanationResponse(subject);
-    } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge') || lowerQuery.includes('advanced')) {
-        difficultyLevel = 2; // Hard difficulty
-        response = generateChallengeResponse(subject);
-    } else if (lowerQuery.includes('practice test') || lowerQuery.includes('quiz') || lowerQuery.includes('exam')) {
-        shouldGenerateTest = true;
-        response = `Great! I'll generate a 10-question practice test on ${subject}. Let's begin!`;
-    } else {
-        // Default response based on mode
-        response = generateDefaultResponse(subject);
+    // Different responses based on selected module
+    if (currentAIModule === 'homework') {
+        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
+            difficultyLevel = 0;
+            response = "I'll help you step-by-step with this homework problem. Let's break it down into simple parts.";
+        } else if (lowerQuery.includes('explain') || lowerQuery.includes('show me')) {
+            difficultyLevel = 1;
+            response = "I'll provide a detailed explanation with examples for your homework question.";
+        } else {
+            response = "I'm your Homework Helper! I can solve problems step-by-step and explain each part clearly.";
+        }
+    } else if (currentAIModule === 'qna') {
+        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
+            difficultyLevel = 0;
+            response = "Let me explain this concept in simpler terms with basic examples.";
+        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
+            difficultyLevel = 2;
+            response = "You're ready for advanced concepts! Let me give you deeper insights.";
+        } else {
+            response = "I'm your Instant Q&A expert! Ask me anything and get detailed, accurate answers.";
+        }
+    } else if (currentAIModule === 'planner') {
+        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
+            difficultyLevel = 0;
+            response = "Let's create a simple, manageable study plan starting with the basics.";
+        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
+            difficultyLevel = 2;
+            response = "I'll create an intensive study plan with advanced topics and challenging practice.";
+        } else {
+            response = "I'll create a personalized study plan based on your goals and timeline.";
+        }
+    } else if (currentAIModule === 'exam') {
+        if (lowerQuery.includes('practice test') || lowerQuery.includes('quiz') || lowerQuery.includes('exam')) {
+            shouldGenerateTest = true;
+            response = `Great! I'll generate a 10-question practice test on ${subject}. Let's begin!`;
+        } else if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
+            difficultyLevel = 0;
+            response = "Let's start with basic exam questions to build your confidence.";
+        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
+            difficultyLevel = 2;
+            response = "You're ready for advanced exam questions! Let's test your knowledge.";
+        } else {
+            response = "I'm your Exam Prep coach! I can generate practice tests and provide detailed feedback.";
+        }
     }
     
     aiResponse.innerHTML = `
-        <div style="padding: 20px; background: #f4f5f7; border-radius: 10px; margin-bottom: 15px;">
-            <p style="font-weight: bold; color: #32325d; margin-bottom: 10px;">You asked:</p>
-            <p style="color: #5e72e4;">"${query}"</p>
+        <div style="padding: 15px; background: #f4f5f7; border-radius: 8px; margin-bottom: 12px;">
+            <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">You asked:</p>
+            <p style="color: #5e72e4; font-size: 13px;">"${query}"</p>
         </div>
-        <div style="padding: 20px; background: linear-gradient(135deg, rgba(94, 114, 228, 0.1) 0%, rgba(130, 94, 228, 0.1) 100%); border-radius: 10px;">
-            <p style="font-weight: bold; color: #32325d; margin-bottom: 10px;">AI Assistant:</p>
-            <p style="line-height: 1.6;">${response}</p>
+        <div style="padding: 15px; background: linear-gradient(135deg, rgba(94, 114, 228, 0.1) 0%, rgba(130, 94, 228, 0.1) 100%); border-radius: 8px;">
+            <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</p>
+            <p style="line-height: 1.5; font-size: 13px;">${response}</p>
         </div>
     `;
     
@@ -1109,55 +1107,11 @@ function handleAIQuery() {
 
 function detectSubjectFromText(text) {
     text = text.toLowerCase();
-    if (text.includes('math') || text.includes('equation') || text.includes('algebra') || text.includes('calculus')) return 'math';
-    if (text.includes('science') || text.includes('biology') || text.includes('chemistry') || text.includes('physics')) return 'science';
-    if (text.includes('english') || text.includes('literature') || text.includes('writing') || text.includes('grammar')) return 'english';
-    if (text.includes('history') || text.includes('geography') || text.includes('social') || text.includes('world war')) return 'history';
+    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'math';
+    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'science';
+    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'english';
+    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'history';
     return 'general';
-}
-
-function generateHelpResponse(subject) {
-    const responses = {
-        math: "I'll help you understand this math concept step by step. Let's start with the basics: What specific part are you struggling with? Is it algebra, geometry, or something else?",
-        science: "Science can be challenging! Let's break this down into simpler parts. Are you having trouble with biology concepts, chemistry equations, or physics principles?",
-        english: "English concepts can be tricky. Let's start from the beginning. Are you struggling with grammar, writing, literature analysis, or vocabulary?",
-        history: "History involves many dates and events. Let's focus on one period or concept at a time. What specific historical event or era are you studying?",
-        general: "I'm here to help! Let's take this one step at a time. Tell me exactly what you're having trouble with, and I'll break it down into simple, easy-to-understand parts."
-    };
-    return responses[subject] || responses.general;
-}
-
-function generateExplanationResponse(subject) {
-    const responses = {
-        math: "I'll explain this math concept clearly with examples. First, let's identify what type of problem this is. Is it algebraic, geometric, or statistical? Then I'll walk you through each step with a similar example.",
-        science: "Let me explain this science concept in detail. I'll start with the fundamental principles, then show you how they apply to real-world examples. We'll work through a sample problem together to reinforce your understanding.",
-        english: "I'll break down this English concept for you. Whether it's grammar rules, literary devices, or writing techniques, I'll provide clear definitions and multiple examples to help you grasp the concept thoroughly.",
-        history: "Let me explain this historical event or period in context. I'll cover the key players, causes, events, and consequences. Understanding the 'why' behind historical events makes them much easier to remember and analyze.",
-        general: "I'll provide a detailed explanation with examples. First, I'll define the key terms, then show you how they work in practice, and finally give you some exercises to test your understanding."
-    };
-    return responses[subject] || responses.general;
-}
-
-function generateChallengeResponse(subject) {
-    const responses = {
-        math: "You're ready for a challenge! I'll give you advanced math problems that require critical thinking and multiple steps to solve. These will push your understanding to the next level.",
-        science: "Let's tackle some advanced science concepts! I'll give you complex problems that integrate multiple principles and require deep analytical thinking. You're ready for this!",
-        english: "Time for advanced English analysis! I'll challenge you with complex literary passages, sophisticated writing prompts, and nuanced grammar exercises that will sharpen your skills.",
-        history: "Let's dive deep into historical analysis! I'll give you complex scenarios that require you to synthesize information from multiple sources and think critically about cause and effect in history.",
-        general: "You asked for a challenge, and I'll deliver! I'll give you advanced problems that require critical thinking, synthesis of multiple concepts, and creative problem-solving. You're ready for this!"
-    };
-    return responses[subject] || responses.general;
-}
-
-function generateDefaultResponse(subject) {
-    const responses = {
-        math: "I'm here to help with math! Whether you need basic explanations, step-by-step solutions, or challenging problems, just let me know what you need.",
-        science: "Let's explore science together! I can help with biology, chemistry, physics, or any other science topic. What specific concept are you working on?",
-        english: "I'm your English expert! Whether you need help with grammar, writing, literature, or vocabulary, I'm here to guide you through it.",
-        history: "Let's make history come alive! I can help you understand historical events, analyze primary sources, or prepare for your history exam.",
-        general: "I'm your personal AI tutor! I can adapt to your learning needs. Try asking for help, explanations, or challenges, and I'll tailor my response to your level."
-    };
-    return responses[subject] || responses.general;
 }
 
 function loadNextProblem() {
@@ -1165,13 +1119,12 @@ function loadNextProblem() {
         problemContainer.innerHTML = "🎉 Congratulations! You've completed all practice problems!";
         studentAnswer.style.display = 'none';
         submitAnswerBtn.style.display = 'none';
-        feedbackArea.innerHTML = "<p style='color: #2dce89; font-weight: bold;'>Great job! You've finished this practice set. Try another topic or ask for more advanced problems!</p>";
+        feedbackArea.innerHTML = "<p style='color: #2dce89; font-weight: bold;'>Great job! You've finished this practice set.</p>";
         return;
     }
     
     const problem = currentProblems[currentProblemIndex];
     problemContainer.innerHTML = `<strong>Question ${currentProblemIndex + 1}:</strong> ${problem.q}`;
-    problemContainer.className = 'math';
     
     studentAnswer.style.display = 'inline-block';
     submitAnswerBtn.style.display = 'inline-block';
@@ -1193,7 +1146,6 @@ function submitAnswer() {
         <p>Explanation: ${problem.hint}</p>`;
         feedbackArea.className = 'correct';
         
-        // Increase difficulty for next question if not already at max
         if (difficultyLevel < 2) {
             difficultyLevel++;
         }
@@ -1207,12 +1159,10 @@ function submitAnswer() {
         <p>Let's try an easier question to build your confidence.</p>`;
         feedbackArea.className = 'incorrect';
         
-        // Decrease difficulty for next question if not already at min
         if (difficultyLevel > 0) {
             difficultyLevel--;
         }
         
-        // Reorder problems to put easier ones first based on difficulty
         reorderProblemsByDifficulty();
         
         setTimeout(() => {
@@ -1225,25 +1175,20 @@ function submitAnswer() {
 }
 
 function reorderProblemsByDifficulty() {
-    // In a real app, you'd have problems tagged by difficulty
-    // For this demo, we'll just shuffle or reorder based on current index
     if (difficultyLevel === 0) {
-        // Move easier problems (first half) to front
         const half = Math.floor(currentProblems.length / 2);
         const easyProblems = currentProblems.slice(0, half);
         const hardProblems = currentProblems.slice(half);
         currentProblems = [...easyProblems, ...hardProblems];
     } else if (difficultyLevel === 2) {
-        // Move harder problems (second half) to front
         const half = Math.floor(currentProblems.length / 2);
         const easyProblems = currentProblems.slice(0, half);
         const hardProblems = currentProblems.slice(half);
         currentProblems = [...hardProblems, ...easyProblems];
     }
-    // If difficultyLevel === 1, keep original order
 }
 
-// Notes Page
+// Notes Page (same as before)
 function initializeNotesPage() {
     if (searchNotes) {
         searchNotes.addEventListener('input', (e) => {
@@ -1259,7 +1204,6 @@ function initializeNotesPage() {
                 return;
             }
             
-            // Get most common subject from notes
             const subjectCounts = {};
             savedNotes.forEach(note => {
                 subjectCounts[note.subject] = (subjectCounts[note.subject] || 0) + 1;
@@ -1274,24 +1218,22 @@ function initializeNotesPage() {
                 }
             }
             
-            // Generate test based on most common subject
             currentTopic = mostCommonSubject;
             currentProblems = [...problemBanks[mostCommonSubject] || problemBanks.math];
             currentProblemIndex = 0;
             difficultyLevel = 1;
             
-            // Switch to AI page and show practice test
             switchPage('ai');
             document.querySelector('.nav-btn[data-page="ai"]').classList.add('active');
             
             aiResponse.innerHTML = `
-                <div style="padding: 20px; background: #f4f5f7; border-radius: 10px; margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #32325d; margin-bottom: 10px;">Generated from your notes!</p>
-                    <p style="color: #5e72e4;">Practice test on ${mostCommonSubject} based on your saved notes.</p>
+                <div style="padding: 15px; background: #f4f5f7; border-radius: 8px; margin-bottom: 12px;">
+                    <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">Generated from your notes!</p>
+                    <p style="color: #5e72e4; font-size: 13px;">Practice test on ${mostCommonSubject} based on your saved notes.</p>
                 </div>
-                <div style="padding: 20px; background: linear-gradient(135deg, rgba(94, 114, 228, 0.1) 0%, rgba(130, 94, 228, 0.1) 100%); border-radius: 10px;">
-                    <p style="font-weight: bold; color: #32325d; margin-bottom: 10px;">AI Assistant:</p>
-                    <p style="line-height: 1.6;">Great! I've generated a 10-question practice test on ${mostCommonSubject} based on your saved notes. Let's begin!</p>
+                <div style="padding: 15px; background: linear-gradient(135deg, rgba(94, 114, 228, 0.1) 0%, rgba(130, 94, 228, 0.1) 100%); border-radius: 8px;">
+                    <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">AI Assistant:</p>
+                    <p style="line-height: 1.5; font-size: 13px;">Great! I've generated a 10-question practice test on ${mostCommonSubject} based on your saved notes. Let's begin!</p>
                 </div>
             `;
             
@@ -1309,7 +1251,6 @@ function initializeNotesPage() {
 function renderNotesBySubject(searchTerm = '') {
     if (!subjectsContainer) return;
     
-    // Group notes by subject
     const notesBySubject = {};
     const subjects = ['math', 'science', 'english', 'history', 'other', 'general'];
     
@@ -1324,7 +1265,6 @@ function renderNotesBySubject(searchTerm = '') {
         notesBySubject[note.subject].push(note);
     });
     
-    // Filter if search term provided
     if (searchTerm) {
         for (const subject in notesBySubject) {
             notesBySubject[subject] = notesBySubject[subject].filter(note => 
@@ -1334,7 +1274,6 @@ function renderNotesBySubject(searchTerm = '') {
         }
     }
     
-    // Sort subjects by note count (descending)
     const sortedSubjects = subjects.filter(subject => notesBySubject[subject].length > 0);
     
     if (sortedSubjects.length === 0) {
@@ -1393,7 +1332,6 @@ function renderNotesBySubject(searchTerm = '') {
             notesGrid.appendChild(noteCard);
         });
         
-        // Add event listener to subject header for toggling
         const subjectHeader = subjectSection.querySelector('.subject-header');
         const subjectContent = subjectSection.querySelector('.subject-content');
         
@@ -1403,7 +1341,6 @@ function renderNotesBySubject(searchTerm = '') {
         });
     });
     
-    // Add event listeners to delete buttons
     document.querySelectorAll('.delete-note').forEach(btn => {
         btn.addEventListener('click', function() {
             const noteId = parseInt(this.getAttribute('data-id'));
@@ -1416,7 +1353,7 @@ function renderNotesBySubject(searchTerm = '') {
     });
 }
 
-// Group Modal
+// Group Modal (same as before)
 function initializeGroupModal() {
     closeModal.addEventListener('click', () => {
         groupModal.style.display = 'none';
@@ -1449,8 +1386,6 @@ function initializeGroupModal() {
             alert(`Study group "${groupName}" created with ${selectedMembers.length} members!`);
             groupModal.style.display = 'none';
             groupNameInput.value = '';
-            
-            // In a real app, you'd create a new group chat here
             recordActivity();
         });
     }
@@ -1472,10 +1407,9 @@ function populateMemberCheckboxes() {
     });
 }
 
-// Real-Time Notifications
+// Notifications (same as before)
 function initializeRealTimeNotifications() {
-    // We'll show notifications based on actual events and messages
-    // No need for interval since we trigger notifications contextually
+    // Notifications are triggered contextually
 }
 
 function showNotification(title, message, icon) {
@@ -1524,7 +1458,7 @@ function getRandomColor() {
 }
 
 window.addEventListener('load', () => {
-    const elements = document.querySelectorAll('.teacher-card, .chat-session, .note-card, .widget');
+    const elements = document.querySelectorAll('.compact-teacher-card, .chat-session, .note-card, .compact-widget');
     elements.forEach((el, index) => {
         setTimeout(() => {
             el.style.animation = 'fadeIn 0.5s ease forwards';
@@ -1532,6 +1466,6 @@ window.addEventListener('load', () => {
     });
 });
 
-console.log('%c🎓 ClassConnect - ULTIMATE Version', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
-console.log('%cNow with: Streak System, Weekly Calendar, Enhanced Notes, Full-width Chat Input', 'color: #825ee4; font-size: 14px;');
-console.log('%cVersion 6.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
+console.log('%c🎓 ClassConnect - COMPACT & ACCESSIBLE Version', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
+console.log('%cNow with: Compact Widgets, Interchangeable AI Modules, Enhanced Calendar', 'color: #825ee4; font-size: 14px;');
+console.log('%cVersion 7.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
