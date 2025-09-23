@@ -117,30 +117,30 @@
                     </div>
                 </div>
 
-                <!-- Academic Workload Scan -->
+                <!-- Academic Workload Scan with Tests -->
                 <div class="widget scan-widget">
                     <div class="widget-header">
                         <h3>📊 Academic Workload Scan</h3>
                     </div>
                     <div class="scan-results">
                         <div class="scan-item urgent">
-                            <div class="scan-label">Urgent (Due in ≤5 days)</div>
-                            <div class="scan-value">2 assessments</div>
+                            <div class="scan-label">Urgent Tests (Due in ≤5 days)</div>
+                            <div class="scan-value">2 tests</div>
                         </div>
                         <div class="scan-item upcoming">
-                            <div class="scan-label">Upcoming (Due in 6-14 days)</div>
-                            <div class="scan-value">4 assignments</div>
+                            <div class="scan-label">Upcoming Tests (Due in 6-14 days)</div>
+                            <div class="scan-value">1 test</div>
                         </div>
-                        <div class="scan-item future">
-                            <div class="scan-label">Future (Due in 15+ days)</div>
-                            <div class="scan-value">3 projects</div>
+                        <div class="scan-item assignments">
+                            <div class="scan-label">Other Assignments</div>
+                            <div class="scan-value">4 assignments</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Compact Widgets Row -->
                 <div class="compact-widgets-row">
-                    <!-- Compact Calendar Widget -->
+                    <!-- Compact Calendar Widget - Now Shows Tests -->
                     <div class="compact-widget calendar-widget">
                         <div class="widget-header">
                             <button id="prev-week" class="calendar-nav">◀️</button>
@@ -217,12 +217,6 @@
                             </select>
                         </div>
                     </div>
-                </div>
-
-                <!-- Compact Teachers Section -->
-                <div class="compact-teachers-section" id="teachers-section">
-                    <h3 class="section-title">Your Teachers</h3>
-                    <div class="compact-teachers-grid" id="teachers-grid"></div>
                 </div>
             </div>
 
@@ -341,7 +335,7 @@
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                                 <polyline points="10 9 9 9 8 9"></polyline>
                             </svg>
-                            🧪 Exam Prep
+                            🧪 Exam Generator
                         </button>
                     </div>
 
@@ -357,13 +351,13 @@
                             </button>
                         </div>
                         <div class="ai-response-area" id="ai-response">
-                            <div class="sample-response">
-                                <p><strong>Select a module above and ask:</strong></p>
+                            <div class="sample-response" id="module-examples">
+                                <p><strong>📚 Homework Helper Examples:</strong></p>
                                 <ul>
-                                    <li><strong>Homework Helper:</strong> "Help me solve 3x² + 5x - 2 = 0"</li>
-                                    <li><strong>Instant Q&A:</strong> "What is photosynthesis?"</li>
-                                    <li><strong>Study Planner:</strong> "Create a study plan for my biology test"</li>
-                                    <li><strong>Exam Prep:</strong> "Test me on World War I"</li>
+                                    <li>"Help me solve 3x² + 5x - 2 = 0"</li>
+                                    <li>"Explain the Pythagorean theorem step by step"</li>
+                                    <li>"How do I balance this chemical equation?"</li>
+                                    <li>"Can you check my essay for grammar errors?"</li>
                                 </ul>
                             </div>
                         </div>
