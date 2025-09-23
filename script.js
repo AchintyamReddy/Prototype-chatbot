@@ -1,17 +1,11 @@
-// ClassConnect - Compact & Accessible Version
-// Features: Compact Widgets, Interchangeable AI Modules, Enhanced Calendar
+// ClassConnect - Final Version
+// Features: Removed Teachers Widget, Calendar Reflects Tests, Interchangeable AI Modules
 
 const teachers = [
     { id: 1, name: "Dr. Sarah Johnson", subjects: ["Math", "Physics"], grade: "Grade 8", initials: "SJ", color: "#5e72e4", image: "media/teachers/sarah-johnson.jpg" },
     { id: 2, name: "Prof. Michael Chen", subjects: ["Biology", "Chemistry"], grade: "Grade 8", initials: "MC", color: "#11cdef", image: "media/teachers/michael-chen.jpg" },
     { id: 3, name: "Ms. Emily Rodriguez", subjects: ["English", "Literature"], grade: "Grade 8", initials: "ER", color: "#2dce89", image: "media/teachers/emily-rodriguez.jpg" },
-    { id: 4, name: "Mr. James Williams", subjects: ["History", "Geography"], grade: "Grade 8", initials: "JW", color: "#fb6340", image: "media/teachers/james-williams.jpg" },
-    { id: 5, name: "Mrs. Priya Patel", subjects: ["Math", "Statistics"], grade: "Grade 8", initials: "PP", color: "#f5365c", image: "media/teachers/priya-patel.jpg" },
-    { id: 6, name: "Dr. Robert Thompson", subjects: ["Computer Science", "Robotics"], grade: "Grade 8", initials: "RT", color: "#825ee4", image: "media/teachers/robert-thompson.jpg" },
-    { id: 7, name: "Ms. Maria Garcia", subjects: ["Spanish", "French"], grade: "Grade 8", initials: "MG", color: "#5e72e4", image: "media/teachers/maria-garcia.jpg" },
-    { id: 8, name: "Mr. David Kim", subjects: ["Physical Education", "Health"], grade: "Grade 8", initials: "DK", color: "#11cdef", image: "media/teachers/david-kim.jpg" },
-    { id: 9, name: "Mrs. Linda Brown", subjects: ["Art", "Design"], grade: "Grade 8", initials: "LB", color: "#2dce89", image: "media/teachers/linda-brown.jpg" },
-    { id: 10, name: "Dr. Ahmed Hassan", subjects: ["Geography", "Environmental Science"], grade: "Grade 8", initials: "AH", color: "#fb6340", image: "media/teachers/ahmed-hassan.jpg" }
+    { id: 4, name: "Mr. James Williams", subjects: ["History", "Geography"], grade: "Grade 8", initials: "JW", color: "#fb6340", image: "media/teachers/james-williams.jpg" }
 ];
 
 const classmates = [
@@ -21,18 +15,13 @@ const classmates = [
     { id: 4, name: "Noah Taylor", status: "offline", initials: "NT", color: "#fb6340", image: "media/students/noah-taylor.jpg" }
 ];
 
-// Sample events for calendar
+// Sample events for calendar - Now focused on tests
 const allEvents = [
     { date: "2025-04-10", title: "Math Quiz", subject: "math", type: "quiz" },
-    { date: "2025-04-12", title: "Science Lab Report", subject: "science", type: "assignment" },
-    { date: "2025-04-14", title: "English Essay", subject: "english", type: "assignment" },
     { date: "2025-04-15", title: "History Test", subject: "history", type: "test" },
-    { date: "2025-04-17", title: "Math Homework", subject: "math", type: "homework" },
     { date: "2025-04-18", title: "Science Test", subject: "science", type: "test" },
     { date: "2025-04-21", title: "English Quiz", subject: "english", type: "quiz" },
-    { date: "2025-04-23", title: "History Project", subject: "history", type: "project" },
-    { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" },
-    { date: "2025-04-28", title: "Science Write-up", subject: "science", type: "assignment" }
+    { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" }
 ];
 
 const problemBanks = {
@@ -90,13 +79,12 @@ const problemBanks = {
 const navButtons = document.querySelectorAll('.nav-btn');
 const pages = document.querySelectorAll('.page');
 const studentProfile = document.getElementById('student-profile');
-const teachersSection = document.getElementById('teachers-section');
-const teachersGrid = document.getElementById('teachers-grid');
 const searchClassmates = document.getElementById('search-classmates');
 const aiInput = document.getElementById('ai-input');
 const aiResponse = document.getElementById('ai-response');
 const aiSendBtn = document.getElementById('ai-send-btn');
 const moduleButtons = document.querySelectorAll('.module-btn');
+const moduleExamples = document.getElementById('module-examples');
 
 // Home page elements
 const prevWeekBtn = document.getElementById('prev-week');
@@ -193,7 +181,6 @@ let hasShownTodayNotification = false;
 document.addEventListener('DOMContentLoaded', () => {
     initializeStreakSystem();
     initializeNavigation();
-    initializeTeachers();
     initializeClassmates();
     initializeTeacherChats();
     initializeStudentProfile();
@@ -207,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStreakMilestone();
 });
 
-// Streak System (same as before)
+// Streak System
 function initializeStreakSystem() {
     const today = new Date().toDateString();
     currentStreakElement.textContent = streakCount;
@@ -229,7 +216,6 @@ function initializeStreakSystem() {
     
     localStorage.setItem('classConnectLastActive', today);
     
-    // Add activity listeners
     navButtons.forEach(btn => {
         btn.addEventListener('click', recordActivity);
     });
@@ -326,50 +312,13 @@ function switchPage(pageName) {
 function initializeStudentProfile() {
     if (studentProfile) {
         studentProfile.addEventListener('click', () => {
-            teachersSection.classList.toggle('show');
-            if (teachersSection.classList.contains('show')) {
-                setTimeout(() => {
-                    teachersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            }
+            // Removed teachers section toggle since we removed the widget
             recordActivity();
         });
     }
 }
 
-// Teachers Grid - Compact Version
-function initializeTeachers() {
-    if (teachersGrid) {
-        teachersGrid.innerHTML = '';
-        teachers.forEach(teacher => {
-            const teacherCard = createCompactTeacherCard(teacher);
-            teachersGrid.appendChild(teacherCard);
-        });
-    }
-}
-
-function createCompactTeacherCard(teacher) {
-    const card = document.createElement('div');
-    card.className = 'compact-teacher-card';
-    
-    card.innerHTML = `
-        <div class="compact-teacher-avatar" style="background: ${teacher.color}">
-            <img src="${teacher.image}" alt="${teacher.name}" class="compact-teacher-avatar-img" onerror="this.style.display='none'">
-            <span style="position: relative; z-index: 1;">${teacher.initials}</span>
-        </div>
-        <div class="compact-teacher-name">${teacher.name}</div>
-        <div class="compact-teacher-subjects">${teacher.subjects[0]}</div>
-    `;
-    
-    card.addEventListener('click', () => {
-        alert(`Viewing ${teacher.name}'s profile`);
-        recordActivity();
-    });
-    
-    return card;
-}
-
-// Classmates Chat (same as before)
+// Classmates Chat
 function initializeClassmates() {
     renderChatSessions();
     
@@ -521,7 +470,7 @@ function sendMessage(classmateId, isTeacher = false) {
         const responseObj = { text: randomResponse, type: 'received', time: new Date() };
         
         if (isTeacher) {
-            teacherChatHistory[classmateId].push(responseObj);
+            teacherChatHistory[classmate.id].push(responseObj);
             addMessageToChat(randomResponse, 'received', new Date(), true);
         } else {
             chatHistory[classmate.id].push(responseObj);
@@ -550,7 +499,7 @@ function formatTime(date) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// Teacher Chats (same as before)
+// Teacher Chats
 function initializeTeacherChats() {
     renderTeacherSessions();
     
@@ -654,7 +603,7 @@ function renderTeacherChatHistory(teacherId) {
     setTimeout(() => { teacherChatMessages.scrollTop = teacherChatMessages.scrollHeight; }, 100);
 }
 
-// Compact Calendar with Weekly Navigation
+// Compact Calendar - Now Shows Tests from Academic Workload Scan
 function initializeCalendar() {
     if (!compactCalendar) return;
     
@@ -710,7 +659,7 @@ function renderCompactCalendar() {
         compactCalendar.appendChild(dayColumn);
     }
     
-    // Add events to days
+    // Add TEST events to days (only tests, quizzes, and exams)
     allEvents.forEach(event => {
         const eventDate = new Date(event.date);
         const eventDay = eventDate.getDay();
@@ -779,7 +728,7 @@ function initializeNotesWidget() {
         });
     }
     
-    // Speech Recognition (same as before)
+    // Speech Recognition
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
@@ -998,13 +947,17 @@ function getActiveTab() {
     return 'type';
 }
 
-// AI Assistant with Interchangeable Modules
+// AI Assistant with Interchangeable Modules and Prompt Examples
 function initializeAIAssistant() {
     moduleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             moduleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentAIModule = btn.getAttribute('data-module');
+            
+            // Update examples based on selected module
+            updateModuleExamples();
+            
             recordActivity();
         });
     });
@@ -1019,6 +972,55 @@ function initializeAIAssistant() {
     }
     
     submitAnswerBtn.addEventListener('click', submitAnswer);
+}
+
+function updateModuleExamples() {
+    const examples = {
+        homework: {
+            title: "📚 Homework Helper Examples:",
+            prompts: [
+                '"Help me solve 3x² + 5x - 2 = 0"',
+                '"Explain the Pythagorean theorem step by step"',
+                '"How do I balance this chemical equation?"',
+                '"Can you check my essay for grammar errors?"'
+            ]
+        },
+        qna: {
+            title: "❓ Instant Q&A Examples:",
+            prompts: [
+                '"What is photosynthesis?"',
+                '"Who was Julius Caesar?"',
+                '"Explain the water cycle in simple terms"',
+                '"What are the causes of World War I?"'
+            ]
+        },
+        planner: {
+            title: "🗓️ Study Planner Examples:",
+            prompts: [
+                '"Create a study plan for my math test next week"',
+                '"Help me organize my study schedule for finals"',
+                '"I have 3 tests in 10 days - how should I study?"',
+                '"Make a daily study plan for biology chapter 5"'
+            ]
+        },
+        exam: {
+            title: "🧪 Exam Generator Examples:",
+            prompts: [
+                '"Give me a practice test on quadratic equations"',
+                '"Test me on World War I causes and effects"',
+                '"Create 10 questions about cell biology"',
+                '"Quiz me on English grammar rules"'
+            ]
+        }
+    };
+    
+    const currentExamples = examples[currentAIModule];
+    moduleExamples.innerHTML = `
+        <p><strong>${currentExamples.title}</strong></p>
+        <ul>
+            ${currentExamples.prompts.map(prompt => `<li>${prompt}</li>`).join('')}
+        </ul>
+    `;
 }
 
 function handleAIQuery() {
@@ -1075,7 +1077,7 @@ function handleAIQuery() {
             difficultyLevel = 2;
             response = "You're ready for advanced exam questions! Let's test your knowledge.";
         } else {
-            response = "I'm your Exam Prep coach! I can generate practice tests and provide detailed feedback.";
+            response = "I'm your Exam Generator! I can create practice tests and provide detailed feedback.";
         }
     }
     
@@ -1188,7 +1190,7 @@ function reorderProblemsByDifficulty() {
     }
 }
 
-// Notes Page (same as before)
+// Notes Page
 function initializeNotesPage() {
     if (searchNotes) {
         searchNotes.addEventListener('input', (e) => {
@@ -1353,7 +1355,7 @@ function renderNotesBySubject(searchTerm = '') {
     });
 }
 
-// Group Modal (same as before)
+// Group Modal
 function initializeGroupModal() {
     closeModal.addEventListener('click', () => {
         groupModal.style.display = 'none';
@@ -1407,7 +1409,7 @@ function populateMemberCheckboxes() {
     });
 }
 
-// Notifications (same as before)
+// Notifications
 function initializeRealTimeNotifications() {
     // Notifications are triggered contextually
 }
@@ -1458,7 +1460,7 @@ function getRandomColor() {
 }
 
 window.addEventListener('load', () => {
-    const elements = document.querySelectorAll('.compact-teacher-card, .chat-session, .note-card, .compact-widget');
+    const elements = document.querySelectorAll('.chat-session, .note-card, .compact-widget');
     elements.forEach((el, index) => {
         setTimeout(() => {
             el.style.animation = 'fadeIn 0.5s ease forwards';
@@ -1466,6 +1468,6 @@ window.addEventListener('load', () => {
     });
 });
 
-console.log('%c🎓 ClassConnect - COMPACT & ACCESSIBLE Version', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
-console.log('%cNow with: Compact Widgets, Interchangeable AI Modules, Enhanced Calendar', 'color: #825ee4; font-size: 14px;');
-console.log('%cVersion 7.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
+console.log('%c🎓 ClassConnect - FINAL VERSION', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
+console.log('%cNow with: Removed Teachers Widget, Calendar Reflects Tests, Interchangeable AI Modules', 'color: #825ee4; font-size: 14px;');
+console.log('%cVersion 8.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
