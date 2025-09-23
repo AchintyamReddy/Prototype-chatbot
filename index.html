@@ -9,6 +9,25 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- Streak Celebration Modal -->
+        <div class="modal" id="streak-modal" style="display: none;">
+            <div class="modal-content streak-modal">
+                <span class="close">&times;</span>
+                <div class="confetti-container" id="confetti-container"></div>
+                <div class="streak-content">
+                    <h2>🎉 Congratulations!</h2>
+                    <div class="streak-badge">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>You've reached a <span id="streak-count">10</span>-day streak!</h3>
+                    <p>Keep up the amazing work! Your dedication is paying off.</p>
+                    <button id="close-streak" class="upload-btn">Continue Learning</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Real-Time Notifications -->
         <div class="notifications-container" id="notifications-container"></div>
 
@@ -74,6 +93,11 @@
                         </div>
                         <div class="profile-info">
                             <h2 id="student-name">Alex Smith</h2>
+                            <div class="streak-container">
+                                <span class="streak-label">🔥 Streak: </span>
+                                <span class="streak-count" id="current-streak">0</span>
+                                <span class="streak-label"> days</span>
+                            </div>
                             <p>Grade 8 Student</p>
                         </div>
                         <div class="profile-stats">
@@ -93,50 +117,84 @@
                     </div>
                 </div>
 
-                <!-- Detailed Scan Widget -->
-                <div class="widget scan-widget">
+                <!-- Calendar Widget with Weekly View -->
+                <div class="widget calendar-widget">
                     <div class="widget-header">
-                        <h3>📊 Academic Workload Scan</h3>
+                        <button id="prev-week" class="calendar-nav">◀️</button>
+                        <h3 id="current-week-display">📅 Week of April 10-16, 2025</h3>
+                        <button id="next-week" class="calendar-nav">▶️</button>
                     </div>
-                    <div class="scan-results">
-                        <div class="scan-item urgent">
-                            <div class="scan-label">Urgent (Due in ≤5 days)</div>
-                            <div class="scan-value">2 assessments</div>
-                        </div>
-                        <div class="scan-item upcoming">
-                            <div class="scan-label">Upcoming (Due in 6-14 days)</div>
-                            <div class="scan-value">4 assignments</div>
-                        </div>
-                        <div class="scan-item future">
-                            <div class="scan-label">Future (Due in 15+ days)</div>
-                            <div class="scan-value">3 projects</div>
-                        </div>
+                    <div class="weekly-calendar" id="weekly-calendar">
+                        <!-- Days will be populated by JS -->
                     </div>
                 </div>
 
-                <!-- Calendar & Notes Widgets -->
-                <div class="widgets-row">
-                    <div class="widget calendar-widget">
-                        <div class="widget-header">
-                            <h3>📅 Upcoming Tests & Quizzes</h3>
-                        </div>
-                        <div class="calendar-events" id="calendar-events"></div>
+                <!-- Advanced Note Taker Widget -->
+                <div class="widget notes-widget">
+                    <div class="widget-header">
+                        <h3>📝 Advanced Note Taker</h3>
                     </div>
-
-                    <div class="widget notes-widget">
-                        <div class="widget-header">
-                            <h3>📝 Advanced Note Taker</h3>
+                    
+                    <!-- Input Method Tabs -->
+                    <div class="notes-tabs">
+                        <button class="tab-btn active" data-tab="type">⌨️ Type</button>
+                        <button class="tab-btn" data-tab="speak">🎤 Speak</button>
+                        <button class="tab-btn" data-tab="upload">🌐 Upload</button>
+                    </div>
+                    
+                    <!-- Type Tab -->
+                    <div class="tab-content active" id="type-tab">
+                        <textarea id="typed-notes" placeholder="Type your notes here..." rows="6" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: vertical;"></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="note-subject" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <option value="general">Select Subject</option>
+                                <option value="math">Math</option>
+                                <option value="science">Science</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <button id="save-typed-note" class="upload-btn">💾 Save Note</button>
                         </div>
+                    </div>
+                    
+                    <!-- Speak Tab -->
+                    <div class="tab-content" id="speak-tab">
                         <div class="notes-controls">
-                            <button id="start-recording" class="mic-btn">🎤 Start</button>
+                            <button id="start-recording" class="mic-btn">🎤 Start Recording</button>
                             <button id="pause-recording" class="mic-btn" disabled>⏸️ Pause</button>
                             <button id="save-transcript" class="upload-btn" disabled>💾 Save Note</button>
-                            <input type="text" id="youtube-url" placeholder="Paste YouTube URL">
-                            <button id="extract-audio" class="upload-btn">▶️ Extract Audio</button>
                         </div>
                         <div class="notes-display" id="notes-display">
-                            <p>Type "I need more help" or "Explain this to me" in AI for adaptive learning!</p>
+                            <p>Click "Start Recording" to begin voice recording. Your transcript will appear here.</p>
                         </div>
+                        <select id="voice-note-subject" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 15px;">
+                            <option value="general">Select Subject for Voice Note</option>
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="history">History</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Upload Tab -->
+                    <div class="tab-content" id="upload-tab">
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="article-url" placeholder="Paste article URL, social media link, or YouTube video" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
+                            <button id="extract-content" class="upload-btn" style="width: 100%;">📥 Extract Content</button>
+                        </div>
+                        <div class="notes-display" id="upload-display">
+                            <p>Paste a link to extract key points and save as notes.</p>
+                        </div>
+                        <select id="upload-note-subject" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 15px;">
+                            <option value="general">Select Subject for Extracted Note</option>
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="history">History</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
                 </div>
 
@@ -168,10 +226,10 @@
                             <p>Connect with your peers and collaborate on assignments</p>
                         </div>
                         <div class="chat-messages" id="chat-messages" style="display:none;"></div>
-                        <div class="chat-input-area" id="chat-input-area" style="display:none;">
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="message-input" placeholder="Type a message...">
-                                <button id="send-message" class="send-btn">Send</button>
+                        <div class="chat-input-area" id="chat-input-area" style="display:none; padding: 15px; border-top: 1px solid #eee; background: white; border-radius: 0 0 15px 15px;">
+                            <div style="display: flex; gap: 10px; flex-direction: column;">
+                                <textarea id="message-input" placeholder="Type a message..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 20px; min-height: 60px; resize: vertical;"></textarea>
+                                <button id="send-message" class="send-btn" style="align-self: flex-end; padding: 10px 25px;">Send</button>
                             </div>
                         </div>
                     </div>
@@ -202,10 +260,10 @@
                             <p>Get help with assignments, clarify concepts, or discuss grades</p>
                         </div>
                         <div class="chat-messages" id="teacher-chat-messages" style="display:none;"></div>
-                        <div class="chat-input-area" id="teacher-chat-input-area" style="display:none;">
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="teacher-message-input" placeholder="Type your question...">
-                                <button id="send-teacher-message" class="send-btn">Send</button>
+                        <div class="chat-input-area" id="teacher-chat-input-area" style="display:none; padding: 15px; border-top: 1px solid #eee; background: white; border-radius: 0 0 15px 15px;">
+                            <div style="display: flex; gap: 10px; flex-direction: column;">
+                                <textarea id="teacher-message-input" placeholder="Type your question..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 20px; min-height: 60px; resize: vertical;"></textarea>
+                                <button id="send-teacher-message" class="send-btn" style="align-self: flex-end; padding: 10px 25px;">Send</button>
                             </div>
                         </div>
                     </div>
@@ -280,7 +338,7 @@
                     <div class="notes-header">
                         <h2>📁 Saved Notes by Subject</h2>
                         <div class="notes-actions">
-                            <input type="text" id="search-notes" placeholder="Search notes...">
+                            <input type="text" id="search-notes" placeholder="Search notes..." style="padding: 10px 15px; border: 2px solid var(--light-gray); border-radius: 20px; font-size: 14px;">
                             <button id="generate-practice-test" class="upload-btn">📝 Generate Practice Test</button>
                         </div>
                     </div>
