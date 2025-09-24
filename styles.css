@@ -231,7 +231,7 @@ body {
 .stat-value { display: block; font-size: 28px; font-weight: bold; }
 .stat-label { display: block; font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Academic Workload Scan */
+/* Academic Workload Scan - Color Coded */
 .scan-widget {
     background: var(--white);
     border-radius: 15px;
@@ -261,18 +261,19 @@ body {
     font-size: 13px;
 }
 
+/* Updated colors as requested */
 .scan-item.urgent {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    background: linear-gradient(135deg, #ff4136, #ff6b6b); /* Red for ≤2 days */
     color: white;
 }
 
 .scan-item.upcoming {
-    background: linear-gradient(135deg, #fb6340, #fa5236);
+    background: linear-gradient(135deg, #0074D9, #39cccc); /* Tealish green for 3-4 days */
     color: white;
 }
 
-.scan-item.assignments {
-    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+.scan-item.future {
+    background: linear-gradient(135deg, #8950fc, #b145e9); /* Purple for 5+ days */
     color: white;
 }
 
@@ -305,7 +306,7 @@ body {
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
-    height: 320px;
+    height: 300px; /* Reduced height for accessibility */
 }
 
 .compact-widget:hover {
@@ -324,6 +325,13 @@ body {
     font-size: 16px;
     color: var(--dark);
     font-weight: 600;
+}
+
+/* Calendar Footer */
+.calendar-footer {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--light-gray);
 }
 
 /* Compact Calendar */
@@ -356,6 +364,13 @@ body {
     padding: 8px;
     min-height: 35px;
     font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compact-day-column:hover {
+    background: rgba(94, 114, 228, 0.1);
+    transform: translateY(-1px);
 }
 
 .compact-day-header {
@@ -381,7 +396,7 @@ body {
 
 .compact-day-events {
     margin-top: 4px;
-    max-height: 150px;
+    max-height: 120px;
     overflow-y: auto;
 }
 
@@ -648,7 +663,7 @@ body {
     padding: 10px 25px;
 }
 
-/* AI Assistant */
+/* AI Assistant - ChatGPT Style */
 .ai-container { background: var(--white); border-radius: 20px; padding: 30px; box-shadow: var(--shadow); }
 .ai-hero { text-align: center; margin-bottom: 25px; }
 .ai-icon {
@@ -701,9 +716,35 @@ body {
     transform: translateY(-2px);
 }
 
-.ai-chat-preview { background: var(--light-gray); border-radius: 15px; padding: 25px; }
-.ai-chat-preview h3 { font-size: 18px; color: var(--dark); margin-bottom: 15px; }
-.chat-input-container { display: flex; gap: 10px; margin-bottom: 15px; }
+.ai-chat-preview { 
+    background: var(--light-gray); 
+    border-radius: 15px; 
+    padding: 25px; 
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-response-area { 
+    background: var(--white); 
+    border-radius: 10px; 
+    padding: 20px; 
+    min-height: 350px; 
+    flex: 1;
+    overflow-y: auto;
+}
+
+#module-examples ul { list-style: none; margin-top: 12px; }
+#module-examples li { padding: 6px 0; padding-left: 20px; position: relative; font-size: 13px; }
+#module-examples li::before { content: '•'; position: absolute; left: 0; color: var(--primary-color); font-weight: bold; }
+
+.chat-input-container { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 15px; 
+}
 .chat-input-container input {
     flex: 1;
     padding: 12px 20px;
@@ -724,21 +765,6 @@ body {
     transition: all 0.3s ease;
 }
 .send-btn:hover { transform: scale(1.05); }
-
-.ai-response-area { background: var(--white); border-radius: 10px; padding: 20px; min-height: 180px; }
-#module-examples ul { list-style: none; margin-top: 12px; }
-#module-examples li { padding: 6px 0; padding-left: 20px; position: relative; font-size: 13px; }
-#module-examples li::before { content: '•'; position: absolute; left: 0; color: var(--primary-color); font-weight: bold; }
-
-/* Practice Test */
-.practice-section { border: 2px solid var(--primary-color); margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 12px; }
-#problem-container { font-size: 16px; font-weight: 500; margin: 15px 0; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-#answer-input-area { margin: 15px 0; display: flex; gap: 10px; align-items: center; }
-#student-answer { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-#feedback-area { margin-top: 15px; padding: 12px; border-radius: 8px; }
-#feedback-area.correct { background: rgba(45, 206, 137, 0.2); border: 1px solid var(--success-color); color: var(--success-color); }
-#feedback-area.incorrect { background: rgba(251, 99, 64, 0.2); border: 1px solid var(--warning-color); color: var(--warning-color); }
-#progress-area { margin-top: 12px; font-weight: 500; font-size: 13px; }
 
 /* Saved Notes */
 .notes-page-container { background: var(--white); border-radius: 20px; padding: 30px; box-shadow: var(--shadow); min-height: 500px; }
