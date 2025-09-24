@@ -117,30 +117,30 @@
                     </div>
                 </div>
 
-                <!-- Academic Workload Scan with Tests -->
+                <!-- Academic Workload Scan - Color Coded -->
                 <div class="widget scan-widget">
                     <div class="widget-header">
                         <h3>📊 Academic Workload Scan</h3>
                     </div>
                     <div class="scan-results">
                         <div class="scan-item urgent">
-                            <div class="scan-label">Urgent Tests (Due in ≤5 days)</div>
-                            <div class="scan-value">2 tests</div>
+                            <div class="scan-label">Urgent Formative (Due in ≤2 days)</div>
+                            <div class="scan-value">3 assessments</div>
                         </div>
                         <div class="scan-item upcoming">
-                            <div class="scan-label">Upcoming Tests (Due in 6-14 days)</div>
-                            <div class="scan-value">1 test</div>
+                            <div class="scan-label">Upcoming Formative (Due in 3-4 days)</div>
+                            <div class="scan-value">2 assessments</div>
                         </div>
-                        <div class="scan-item assignments">
-                            <div class="scan-label">Other Assignments</div>
-                            <div class="scan-value">4 assignments</div>
+                        <div class="scan-item future">
+                            <div class="scan-label">Future Formative (Due in 5+ days)</div>
+                            <div class="scan-value">4 assessments</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Compact Widgets Row -->
                 <div class="compact-widgets-row">
-                    <!-- Compact Calendar Widget - Now Shows Tests -->
+                    <!-- Editable Calendar Widget - Summative Only -->
                     <div class="compact-widget calendar-widget">
                         <div class="widget-header">
                             <button id="prev-week" class="calendar-nav">◀️</button>
@@ -149,6 +149,9 @@
                         </div>
                         <div class="compact-calendar" id="compact-calendar">
                             <!-- Days will be populated by JS -->
+                        </div>
+                        <div class="calendar-footer">
+                            <button id="add-event-btn" class="upload-btn" style="width: 100%; padding: 8px; font-size: 12px;">➕ Add Summative Assessment</button>
                         </div>
                     </div>
 
@@ -167,7 +170,7 @@
                         
                         <!-- Type Tab -->
                         <div class="tab-content active" id="type-tab">
-                            <textarea id="typed-notes" placeholder="Type your notes..." rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; resize: vertical; font-size: 12px;"></textarea>
+                            <textarea id="typed-notes" placeholder="Type your notes..." rows="2" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; resize: vertical; font-size: 12px; min-height: 60px;"></textarea>
                             <div style="display: flex; gap: 5px;">
                                 <select id="note-subject" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 11px;">
                                     <option value="general">Subject</option>
@@ -286,7 +289,7 @@
                 </div>
             </div>
 
-            <!-- AI Assistant with Interchangeable Modules -->
+            <!-- AI Assistant - ChatGPT Style -->
             <div id="ai-page" class="page">
                 <div class="ai-container">
                     <div class="ai-hero">
@@ -298,7 +301,7 @@
                             </svg>
                         </div>
                         <h2>AI Study Assistant</h2>
-                        <p class="ai-subtitle">Your intelligent learning companion</p>
+                        <p class="ai-subtitle">Powered by advanced learning algorithms</p>
                     </div>
 
                     <!-- Interchangeable AI Modules -->
@@ -340,16 +343,6 @@
                     </div>
 
                     <div class="ai-chat-preview">
-                        <h3>Ask me anything...</h3>
-                        <div class="chat-input-container">
-                            <input type="text" placeholder="e.g., Help me with quadratic equations" id="ai-input">
-                            <button class="send-btn" id="ai-send-btn">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                </svg>
-                            </button>
-                        </div>
                         <div class="ai-response-area" id="ai-response">
                             <div class="sample-response" id="module-examples">
                                 <p><strong>📚 Homework Helper Examples:</strong></p>
@@ -361,19 +354,14 @@
                                 </ul>
                             </div>
                         </div>
-
-                        <!-- Practice Test Section -->
-                        <div class="practice-section" id="practice-section" style="display: none;">
-                            <h3 id="practice-title">Practice Test</h3>
-                            <div id="problem-container"></div>
-                            <div id="answer-input-area">
-                                <input type="text" id="student-answer" placeholder="Enter your answer">
-                                <button id="submit-answer" class="send-btn">Submit</button>
-                            </div>
-                            <div id="feedback-area"></div>
-                            <div id="progress-area">
-                                Question <span id="current-problem">1</span> of 10
-                            </div>
+                        <div class="chat-input-container">
+                            <input type="text" placeholder="Ask me anything about your studies..." id="ai-input">
+                            <button class="send-btn" id="ai-send-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -395,6 +383,40 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal" id="event-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close event-close">&times;</span>
+            <h2>Add Summative Assessment</h2>
+            <div style="margin: 15px 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Date:</label>
+                <input type="date" id="event-date" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div style="margin: 15px 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Title:</label>
+                <input type="text" id="event-title" placeholder="e.g., Math Test - Chapter 5" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div style="margin: 15px 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Subject:</label>
+                <select id="event-subject" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="math">Math</option>
+                    <option value="science">Science</option>
+                    <option value="english">English</option>
+                    <option value="history">History</option>
+                </select>
+            </div>
+            <div style="margin: 15px 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Type:</label>
+                <select id="event-type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="test">Test</option>
+                    <option value="quiz">Quiz</option>
+                    <option value="project">Project</option>
+                </select>
+            </div>
+            <button id="save-event-btn" class="upload-btn" style="width: 100%;">Save Assessment</button>
+        </div>
     </div>
 
     <!-- Create Study Group Modal -->
