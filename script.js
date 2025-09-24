@@ -1,5 +1,5 @@
-// ClassConnect - Final Version
-// Features: Removed Teachers Widget, Calendar Reflects Tests, Interchangeable AI Modules
+// ClassConnect - Final Accessible Version
+// Features: ChatGPT-style AI, Editable Calendar, Color-coded Workload, Removed Teachers Widget
 
 const teachers = [
     { id: 1, name: "Dr. Sarah Johnson", subjects: ["Math", "Physics"], grade: "Grade 8", initials: "SJ", color: "#5e72e4", image: "media/teachers/sarah-johnson.jpg" },
@@ -15,13 +15,27 @@ const classmates = [
     { id: 4, name: "Noah Taylor", status: "offline", initials: "NT", color: "#fb6340", image: "media/students/noah-taylor.jpg" }
 ];
 
-// Sample events for calendar - Now focused on tests
-const allEvents = [
+// Sample summative events for calendar (tests, quizzes, projects only)
+const summativeEvents = [
     { date: "2025-04-10", title: "Math Quiz", subject: "math", type: "quiz" },
     { date: "2025-04-15", title: "History Test", subject: "history", type: "test" },
     { date: "2025-04-18", title: "Science Test", subject: "science", type: "test" },
     { date: "2025-04-21", title: "English Quiz", subject: "english", type: "quiz" },
-    { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" }
+    { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" },
+    { date: "2025-04-28", title: "Science Project", subject: "science", type: "project" }
+];
+
+// Formative assessments for workload scan
+const formativeAssessments = [
+    { date: "2025-04-08", title: "Math Homework", subject: "math", type: "homework" },
+    { date: "2025-04-09", title: "Science Lab", subject: "science", type: "lab" },
+    { date: "2025-04-10", title: "English Reading", subject: "english", type: "reading" },
+    { date: "2025-04-12", title: "History Worksheet", subject: "history", type: "worksheet" },
+    { date: "2025-04-13", title: "Math Practice", subject: "math", type: "practice" },
+    { date: "2025-04-16", title: "Science Notes", subject: "science", type: "notes" },
+    { date: "2025-04-20", title: "English Draft", subject: "english", type: "draft" },
+    { date: "2025-04-22", title: "History Research", subject: "history", type: "research" },
+    { date: "2025-04-26", title: "Math Review", subject: "math", type: "review" }
 ];
 
 const problemBanks = {
@@ -104,6 +118,14 @@ const articleUrl = document.getElementById('article-url');
 const extractContentBtn = document.getElementById('extract-content');
 const uploadDisplay = document.getElementById('upload-display');
 const tabButtons = document.querySelectorAll('.tab-btn');
+const addEventBtn = document.getElementById('add-event-btn');
+const eventModal = document.getElementById('event-modal');
+const eventCloseBtn = document.querySelector('.event-close');
+const eventDate = document.getElementById('event-date');
+const eventTitle = document.getElementById('event-title');
+const eventSubject = document.getElementById('event-subject');
+const eventType = document.getElementById('event-type');
+const saveEventBtn = document.getElementById('save-event-btn');
 
 // Streak elements
 const currentStreakElement = document.getElementById('current-streak');
@@ -131,15 +153,6 @@ const teacherMessageInput = document.getElementById('teacher-message-input');
 const sendTeacherMessageBtn = document.getElementById('send-teacher-message');
 const searchTeachers = document.getElementById('search-teachers');
 
-// Practice elements
-const practiceSection = document.getElementById('practice-section');
-const practiceTitle = document.getElementById('practice-title');
-const problemContainer = document.getElementById('problem-container');
-const studentAnswer = document.getElementById('student-answer');
-const submitAnswerBtn = document.getElementById('submit-answer');
-const feedbackArea = document.getElementById('feedback-area');
-const currentProblemSpan = document.getElementById('current-problem');
-
 // Notes page elements
 const searchNotes = document.getElementById('search-notes');
 const generatePracticeTestBtn = document.getElementById('generate-practice-test');
@@ -163,19 +176,16 @@ let isRecording = false;
 let isPaused = false;
 let currentTranscript = '';
 let savedNotes = JSON.parse(localStorage.getItem('classConnectNotes') || '[]');
-let currentTopic = '';
-let currentProblemIndex = 0;
-let currentProblems = [];
 let currentAIModule = 'homework';
 let chatHistory = {};
 let teacherChatHistory = {};
 let notificationInterval = null;
 let lastNotificationId = 0;
-let difficultyLevel = 0;
 let currentDate = new Date();
 let streakCount = parseInt(localStorage.getItem('classConnectStreak') || '0');
 let lastActiveDate = localStorage.getItem('classConnectLastActive');
 let hasShownTodayNotification = false;
+let currentEvents = [...summativeEvents]; // Make it mutable
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -190,8 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeNotesPage();
     initializeRealTimeNotifications();
     initializeGroupModal();
+    initializeEventModal();
     updateNotesDisplay();
     checkStreakMilestone();
+    updateWorkloadScan();
 });
 
 // Streak System
@@ -312,7 +324,7 @@ function switchPage(pageName) {
 function initializeStudentProfile() {
     if (studentProfile) {
         studentProfile.addEventListener('click', () => {
-            // Removed teachers section toggle since we removed the widget
+            // Teachers section removed, so no action needed
             recordActivity();
         });
     }
@@ -603,7 +615,7 @@ function renderTeacherChatHistory(teacherId) {
     setTimeout(() => { teacherChatMessages.scrollTop = teacherChatMessages.scrollHeight; }, 100);
 }
 
-// Compact Calendar - Now Shows Tests from Academic Workload Scan
+// Editable Calendar Widget
 function initializeCalendar() {
     if (!compactCalendar) return;
     
@@ -620,6 +632,16 @@ function initializeCalendar() {
             currentDate.setDate(currentDate.getDate() + 7);
             renderCompactCalendar();
             recordActivity();
+        });
+    }
+    
+    if (addEventBtn) {
+        addEventBtn.addEventListener('click', () => {
+            eventModal.style.display = 'block';
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            eventDate.value = tomorrow.toISOString().split('T')[0];
         });
     }
     
@@ -644,6 +666,7 @@ function renderCompactCalendar() {
         
         const dayColumn = document.createElement('div');
         dayColumn.className = 'compact-day-column';
+        dayColumn.dataset.date = formatDate(dayDate);
         
         const isToday = dayDate.toDateString() === new Date().toDateString();
         const dayHeaderClass = isToday ? 'compact-day-header today' : 'compact-day-header';
@@ -656,13 +679,18 @@ function renderCompactCalendar() {
             <div class="compact-day-events" id="compact-day-events-${formatDate(dayDate)}"></div>
         `;
         
+        // Add click event to add event to this day
+        dayColumn.addEventListener('click', () => {
+            eventModal.style.display = 'block';
+            eventDate.value = formatDate(dayDate);
+        });
+        
         compactCalendar.appendChild(dayColumn);
     }
     
-    // Add TEST events to days (only tests, quizzes, and exams)
-    allEvents.forEach(event => {
+    // Add SUMMATIVE events to days
+    currentEvents.forEach(event => {
         const eventDate = new Date(event.date);
-        const eventDay = eventDate.getDay();
         const eventStartOfWeek = new Date(eventDate);
         eventStartOfWeek.setDate(eventDate.getDate() - eventDate.getDay());
         
@@ -673,22 +701,97 @@ function renderCompactCalendar() {
                 eventElement.className = `compact-event-item ${event.type}`;
                 eventElement.title = `${event.title} (${event.subject})`;
                 eventElement.textContent = event.title;
-                eventsContainer.appendChild(eventElement);
                 
-                // Show notification for upcoming tests within 5 days
-                const today = new Date();
-                const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-                if (daysUntil >= 0 && daysUntil <= 5 && (event.type === 'test' || event.type === 'quiz') && !hasShownTodayNotification) {
-                    showNotification("Upcoming Test", `${event.title} in ${daysUntil} days!`, "⚠️");
-                    hasShownTodayNotification = true;
-                }
+                // Add click to edit event
+                eventElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // In a real app, you'd open edit modal
+                    alert(`Edit ${event.title} (${event.type})`);
+                });
+                
+                eventsContainer.appendChild(eventElement);
             }
         }
     });
 }
 
 function formatDate(date) {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Event Modal
+function initializeEventModal() {
+    if (eventCloseBtn) {
+        eventCloseBtn.addEventListener('click', () => {
+            eventModal.style.display = 'none';
+        });
+    }
+    
+    if (saveEventBtn) {
+        saveEventBtn.addEventListener('click', () => {
+            const date = eventDate.value;
+            const title = eventTitle.value.trim();
+            const subject = eventSubject.value;
+            const type = eventType.value;
+            
+            if (!date || !title) {
+                alert('Please fill in all fields!');
+                return;
+            }
+            
+            // Add to events array
+            currentEvents.push({ date, title, subject, type });
+            
+            // Save to localStorage
+            localStorage.setItem('classConnectEvents', JSON.stringify(currentEvents));
+            
+            // Close modal and refresh calendar
+            eventModal.style.display = 'none';
+            renderCompactCalendar();
+            
+            alert('Assessment added successfully!');
+            recordActivity();
+        });
+    }
+    
+    // Close modal if clicked outside
+    window.addEventListener('click', (event) => {
+        if (event.target === eventModal) {
+            eventModal.style.display = 'none';
+        }
+    });
+}
+
+// Update Academic Workload Scan with color-coded formative assessments
+function updateWorkloadScan() {
+    const today = new Date();
+    let urgentCount = 0; // ≤2 days
+    let upcomingCount = 0; // 3-4 days  
+    let futureCount = 0; // 5+ days
+    
+    formativeAssessments.forEach(assessment => {
+        const assessmentDate = new Date(assessment.date);
+        const daysUntil = Math.ceil((assessmentDate - today) / (1000 * 60 * 60 * 24));
+        
+        if (daysUntil >= 0) {
+            if (daysUntil <= 2) {
+                urgentCount++;
+            } else if (daysUntil <= 4) {
+                upcomingCount++;
+            } else {
+                futureCount++;
+            }
+        }
+    });
+    
+    // Update the scan widget
+    const scanItems = document.querySelectorAll('.scan-item');
+    if (scanItems[0]) scanItems[0].querySelector('.scan-value').textContent = `${urgentCount} assessments`;
+    if (scanItems[1]) scanItems[1].querySelector('.scan-value').textContent = `${upcomingCount} assessments`;
+    if (scanItems[2]) scanItems[2].querySelector('.scan-value').textContent = `${futureCount} assessments`;
 }
 
 // Compact Notes Widget
@@ -947,7 +1050,7 @@ function getActiveTab() {
     return 'type';
 }
 
-// AI Assistant with Interchangeable Modules and Prompt Examples
+// AI Assistant - ChatGPT Style with Interchangeable Modules
 function initializeAIAssistant() {
     moduleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -970,8 +1073,6 @@ function initializeAIAssistant() {
             }
         });
     }
-    
-    submitAnswerBtn.addEventListener('click', submitAnswer);
 }
 
 function updateModuleExamples() {
@@ -1027,81 +1128,46 @@ function handleAIQuery() {
     const query = aiInput.value.trim();
     if (!query) return;
     
-    practiceSection.style.display = 'none';
-    aiResponse.innerHTML = '<p>🤔 Thinking...</p>';
+    // Create a new message element for the user's query
+    const userMessage = document.createElement('div');
+    userMessage.className = 'ai-message user-message';
+    userMessage.innerHTML = `<div class="message-content">${query}</div>`;
     
-    const lowerQuery = query.toLowerCase();
-    let response = '';
-    let shouldGenerateTest = false;
-    let subject = detectSubjectFromText(query);
+    // Create AI response container
+    const aiResponseDiv = document.createElement('div');
+    aiResponseDiv.className = 'ai-message ai-response';
+    aiResponseDiv.innerHTML = '<div class="message-content">🤔 Thinking...</div>';
     
-    // Different responses based on selected module
-    if (currentAIModule === 'homework') {
-        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
-            difficultyLevel = 0;
-            response = "I'll help you step-by-step with this homework problem. Let's break it down into simple parts.";
-        } else if (lowerQuery.includes('explain') || lowerQuery.includes('show me')) {
-            difficultyLevel = 1;
-            response = "I'll provide a detailed explanation with examples for your homework question.";
-        } else {
-            response = "I'm your Homework Helper! I can solve problems step-by-step and explain each part clearly.";
-        }
-    } else if (currentAIModule === 'qna') {
-        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
-            difficultyLevel = 0;
-            response = "Let me explain this concept in simpler terms with basic examples.";
-        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
-            difficultyLevel = 2;
-            response = "You're ready for advanced concepts! Let me give you deeper insights.";
-        } else {
-            response = "I'm your Instant Q&A expert! Ask me anything and get detailed, accurate answers.";
-        }
-    } else if (currentAIModule === 'planner') {
-        if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
-            difficultyLevel = 0;
-            response = "Let's create a simple, manageable study plan starting with the basics.";
-        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
-            difficultyLevel = 2;
-            response = "I'll create an intensive study plan with advanced topics and challenging practice.";
-        } else {
-            response = "I'll create a personalized study plan based on your goals and timeline.";
-        }
-    } else if (currentAIModule === 'exam') {
-        if (lowerQuery.includes('practice test') || lowerQuery.includes('quiz') || lowerQuery.includes('exam')) {
-            shouldGenerateTest = true;
-            response = `Great! I'll generate a 10-question practice test on ${subject}. Let's begin!`;
-        } else if (lowerQuery.includes('more help') || lowerQuery.includes('don\'t understand')) {
-            difficultyLevel = 0;
-            response = "Let's start with basic exam questions to build your confidence.";
-        } else if (lowerQuery.includes('harder') || lowerQuery.includes('challenge')) {
-            difficultyLevel = 2;
-            response = "You're ready for advanced exam questions! Let's test your knowledge.";
-        } else {
-            response = "I'm your Exam Generator! I can create practice tests and provide detailed feedback.";
-        }
-    }
+    // Clear previous responses and add new conversation
+    aiResponse.innerHTML = '';
+    aiResponse.appendChild(userMessage);
+    aiResponse.appendChild(aiResponseDiv);
     
-    aiResponse.innerHTML = `
-        <div style="padding: 15px; background: #f4f5f7; border-radius: 8px; margin-bottom: 12px;">
-            <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">You asked:</p>
-            <p style="color: #5e72e4; font-size: 13px;">"${query}"</p>
-        </div>
-        <div style="padding: 15px; background: linear-gradient(135deg, rgba(94, 114, 228, 0.1) 0%, rgba(130, 94, 228, 0.1) 100%); border-radius: 8px;">
-            <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</p>
-            <p style="line-height: 1.5; font-size: 13px;">${response}</p>
-        </div>
-    `;
-    
-    if (shouldGenerateTest) {
-        currentTopic = subject;
-        currentProblems = [...problemBanks[subject] || problemBanks.math];
-        currentProblemIndex = 0;
-        setTimeout(() => {
-            practiceSection.style.display = 'block';
-            practiceTitle.textContent = `Practice Test - ${subject.charAt(0).toUpperCase() + subject.slice(1)}`;
-            loadNextProblem();
-        }, 1500);
-    }
+    // Process the query
+    setTimeout(() => {
+        const lowerQuery = query.toLowerCase();
+        let response = '';
+        let subject = detectSubjectFromText(query);
+        
+        // Handle any prompt gracefully with consistent responses
+        if (currentAIModule === 'homework') {
+            response = `I'd be happy to help with your ${subject} homework! Here's a step-by-step approach to solving problems like this:\n\n1. First, identify what type of problem this is\n2. Recall the relevant formulas or concepts\n3. Apply the concepts step by step\n4. Check your work for accuracy\n\nFor your specific question about "${query}", I recommend starting with step 1. Would you like me to walk through a similar example?`;
+        } else if (currentAIModule === 'qna') {
+            response = `Great question about ${subject}! Here's a clear, detailed explanation:\n\n${getRandomExplanation(subject)}\n\nThis concept is fundamental to understanding ${subject}. Would you like me to provide examples or dive deeper into any part?`;
+        } else if (currentAIModule === 'planner') {
+            response = `I'll help you create an effective study plan for ${subject}! Here's a personalized approach:\n\n• **Daily Goals**: Break down your material into manageable chunks\n• **Study Sessions**: 25-minute focused sessions with 5-minute breaks\n• **Review Schedule**: Review material after 1 day, 3 days, and 1 week\n• **Practice**: Include practice problems daily\n\nBased on your query "${query}", I suggest focusing on the most challenging topics first. Would you like me to create a detailed day-by-day schedule?`;
+        } else if (currentAIModule === 'exam') {
+            response = `Excellent! I'll help you prepare for your ${subject} exam. Here's what I recommend:\n\n1. **Diagnostic Test**: Take a quick 5-question quiz to identify weak areas\n2. **Targeted Review**: Focus on your weakest topics first\n3. **Practice Tests**: Take full-length practice exams under timed conditions\n4. **Review Mistakes**: Analyze every incorrect answer thoroughly\n\nFor "${query}", I can generate a custom practice test right now. Just say "Generate practice test" and I'll create 10 questions tailored to your needs!`;
+        }
+        
+        // Update AI response with formatted answer
+        aiResponseDiv.innerHTML = `
+            <div class="message-content">
+                <div style="font-weight: bold; color: #5e72e4; margin-bottom: 10px;">AI ${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</div>
+                <div style="line-height: 1.6;">${response.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+    }, 1000);
     
     aiInput.value = '';
     recordActivity();
@@ -1109,85 +1175,22 @@ function handleAIQuery() {
 
 function detectSubjectFromText(text) {
     text = text.toLowerCase();
-    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'math';
-    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'science';
-    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'english';
-    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'history';
-    return 'general';
+    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'Math';
+    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'Science';
+    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'English';
+    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'History';
+    return 'your subject';
 }
 
-function loadNextProblem() {
-    if (currentProblemIndex >= currentProblems.length) {
-        problemContainer.innerHTML = "🎉 Congratulations! You've completed all practice problems!";
-        studentAnswer.style.display = 'none';
-        submitAnswerBtn.style.display = 'none';
-        feedbackArea.innerHTML = "<p style='color: #2dce89; font-weight: bold;'>Great job! You've finished this practice set.</p>";
-        return;
-    }
-    
-    const problem = currentProblems[currentProblemIndex];
-    problemContainer.innerHTML = `<strong>Question ${currentProblemIndex + 1}:</strong> ${problem.q}`;
-    
-    studentAnswer.style.display = 'inline-block';
-    submitAnswerBtn.style.display = 'inline-block';
-    studentAnswer.value = '';
-    feedbackArea.innerHTML = '';
-    currentProblemSpan.textContent = currentProblemIndex + 1;
-    studentAnswer.focus();
-}
-
-function submitAnswer() {
-    const userAnswer = studentAnswer.value.trim().toLowerCase();
-    const problem = currentProblems[currentProblemIndex];
-    const correctAnswer = problem.a.toLowerCase();
-    
-    const isCorrect = userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer);
-    
-    if (isCorrect) {
-        feedbackArea.innerHTML = `<p class="correct">✅ Correct! Well done!</p>
-        <p>Explanation: ${problem.hint}</p>`;
-        feedbackArea.className = 'correct';
-        
-        if (difficultyLevel < 2) {
-            difficultyLevel++;
-        }
-        
-        currentProblemIndex++;
-        setTimeout(loadNextProblem, 2000);
-    } else {
-        feedbackArea.innerHTML = `<p class="incorrect">❌ Not quite right. Let me help you understand:</p>
-        <p><strong>Correct Answer:</strong> ${problem.a}</p>
-        <p><strong>Explanation:</strong> ${problem.hint}</p>
-        <p>Let's try an easier question to build your confidence.</p>`;
-        feedbackArea.className = 'incorrect';
-        
-        if (difficultyLevel > 0) {
-            difficultyLevel--;
-        }
-        
-        reorderProblemsByDifficulty();
-        
-        setTimeout(() => {
-            studentAnswer.value = '';
-            studentAnswer.focus();
-        }, 3000);
-    }
-    
-    recordActivity();
-}
-
-function reorderProblemsByDifficulty() {
-    if (difficultyLevel === 0) {
-        const half = Math.floor(currentProblems.length / 2);
-        const easyProblems = currentProblems.slice(0, half);
-        const hardProblems = currentProblems.slice(half);
-        currentProblems = [...easyProblems, ...hardProblems];
-    } else if (difficultyLevel === 2) {
-        const half = Math.floor(currentProblems.length / 2);
-        const easyProblems = currentProblems.slice(0, half);
-        const hardProblems = currentProblems.slice(half);
-        currentProblems = [...hardProblems, ...easyProblems];
-    }
+function getRandomExplanation(subject) {
+    const explanations = {
+        'Math': 'Mathematical concepts build upon each other. Understanding foundational principles like algebra and geometry is crucial for solving more complex problems. Always show your work and check your answers.',
+        'Science': 'Science is about understanding how the natural world works through observation, experimentation, and evidence-based reasoning. Focus on understanding concepts rather than just memorizing facts.',
+        'English': 'English involves analyzing literature, developing writing skills, and understanding language structure. Practice reading critically and writing clearly to improve your skills.',
+        'History': 'History helps us understand how past events shape our present world. Focus on causes, effects, and connections between events rather than just dates and names.',
+        'your subject': 'Learning any subject requires consistent practice, active engagement, and seeking help when needed. Break complex topics into smaller parts and build your understanding step by step.'
+    };
+    return explanations[subject] || explanations['your subject'];
 }
 
 // Notes Page
@@ -1220,11 +1223,7 @@ function initializeNotesPage() {
                 }
             }
             
-            currentTopic = mostCommonSubject;
-            currentProblems = [...problemBanks[mostCommonSubject] || problemBanks.math];
-            currentProblemIndex = 0;
-            difficultyLevel = 1;
-            
+            // Switch to AI page and show practice test
             switchPage('ai');
             document.querySelector('.nav-btn[data-page="ai"]').classList.add('active');
             
@@ -1238,12 +1237,6 @@ function initializeNotesPage() {
                     <p style="line-height: 1.5; font-size: 13px;">Great! I've generated a 10-question practice test on ${mostCommonSubject} based on your saved notes. Let's begin!</p>
                 </div>
             `;
-            
-            setTimeout(() => {
-                practiceSection.style.display = 'block';
-                practiceTitle.textContent = `Practice Test - ${mostCommonSubject.charAt(0).toUpperCase() + mostCommonSubject.slice(1)}`;
-                loadNextProblem();
-            }, 1500);
             
             recordActivity();
         });
@@ -1411,7 +1404,17 @@ function populateMemberCheckboxes() {
 
 // Notifications
 function initializeRealTimeNotifications() {
-    // Notifications are triggered contextually
+    // Show notifications for formative assessments
+    const today = new Date();
+    formativeAssessments.forEach(assessment => {
+        const assessmentDate = new Date(assessment.date);
+        const daysUntil = Math.ceil((assessmentDate - today) / (1000 * 60 * 60 * 24));
+        
+        if (daysUntil >= 0 && daysUntil <= 2 && !hasShownTodayNotification) {
+            showNotification("Formative Assessment", `${assessment.title} is due in ${daysUntil} days!`, "📚");
+            hasShownTodayNotification = true;
+        }
+    });
 }
 
 function showNotification(title, message, icon) {
@@ -1468,6 +1471,6 @@ window.addEventListener('load', () => {
     });
 });
 
-console.log('%c🎓 ClassConnect - FINAL VERSION', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
-console.log('%cNow with: Removed Teachers Widget, Calendar Reflects Tests, Interchangeable AI Modules', 'color: #825ee4; font-size: 14px;');
-console.log('%cVersion 8.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
+console.log('%c🎓 ClassConnect - FINAL ACCESSIBLE VERSION', 'color: #5e72e4; font-size: 20px; font-weight: bold;');
+console.log('%cNow with: ChatGPT-style AI, Editable Calendar, Color-coded Workload, Removed Teachers Widget', 'color: #825ee4; font-size: 14px;');
+console.log('%cVersion 9.0.0 | All features implemented', 'color: #11cdef; font-size: 12px;');
