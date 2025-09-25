@@ -144,7 +144,7 @@
                     <div class="compact-widget calendar-widget">
                         <div class="widget-header">
                             <button id="prev-week" class="calendar-nav">◀️</button>
-                            <h3 id="current-week-display">📅 Week of Apr 10-16, 2025</h3>
+                            <h3 id="current-week-display">📅 Week of Apr 10-16</h3>
                             <button id="next-week" class="calendar-nav">▶️</button>
                         </div>
                         <div class="compact-calendar" id="compact-calendar">
@@ -155,44 +155,69 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Advanced Note Taker -->
+                    <!-- Compact Advanced Note Taker -->
                     <div class="compact-widget notes-widget">
                         <div class="widget-header">
                             <h3>📝 Advanced Note Taker</h3>
                         </div>
                         
-                        <!-- Subject Dropdown -->
-                        <div style="margin-bottom: 10px;">
-                            <select id="note-subject-dropdown" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px;">
-                                <option value="general">Select Subject</option>
+                        <!-- Input Method Tabs -->
+                        <div class="notes-tabs">
+                            <button class="tab-btn active" data-tab="type">⌨️ Type</button>
+                            <button class="tab-btn" data-tab="speak">🎤 Speak</button>
+                            <button class="tab-btn" data-tab="upload">🌐 Upload</button>
+                        </div>
+                        
+                        <!-- Type Tab -->
+                        <div class="tab-content active" id="type-tab">
+                            <textarea id="typed-notes" placeholder="Type your notes..." rows="2" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; resize: vertical; font-size: 12px; min-height: 60px;"></textarea>
+                            <div style="display: flex; gap: 5px;">
+                                <select id="note-subject" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 11px;">
+                                    <option value="general">Subject</option>
+                                    <option value="math">Math</option>
+                                    <option value="science">Science</option>
+                                    <option value="english">English</option>
+                                    <option value="history">History</option>
+                                </select>
+                                <button id="save-typed-note" class="upload-btn" style="padding: 6px 10px; font-size: 11px;">💾 Save</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Speak Tab -->
+                        <div class="tab-content" id="speak-tab">
+                            <div class="notes-controls" style="gap: 5px; margin-bottom: 10px;">
+                                <button id="start-recording" class="mic-btn" style="padding: 6px 10px; font-size: 11px;">🎤 Start</button>
+                                <button id="pause-recording" class="mic-btn" style="padding: 6px 10px; font-size: 11px;" disabled>⏸️ Pause</button>
+                                <button id="save-transcript" class="upload-btn" style="padding: 6px 10px; font-size: 11px;" disabled>💾 Save</button>
+                            </div>
+                            <div class="notes-display" id="notes-display" style="min-height: 60px; padding: 8px; font-size: 11px;">
+                                <p>Click "Start" to record.</p>
+                            </div>
+                            <select id="voice-note-subject" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-top: 10px; font-size: 11px;">
+                                <option value="general">Subject</option>
                                 <option value="math">Math</option>
                                 <option value="science">Science</option>
                                 <option value="english">English</option>
                                 <option value="history">History</option>
-                                <option value="other">Other</option>
                             </select>
                         </div>
                         
-                        <!-- Input Method Dropdown -->
-                        <div style="margin-bottom: 10px;">
-                            <select id="input-method" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px;">
-                                <option value="type">Type Notes</option>
-                                <option value="speak">Spoken Notes</option>
-                                <option value="upload">Upload File</option>
-                                <option value="url">Paste URL</option>
+                        <!-- Upload Tab -->
+                        <div class="tab-content" id="upload-tab">
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="article-url" placeholder="Paste URL or link" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 5px; font-size: 11px;">
+                                <button id="extract-content" class="upload-btn" style="width: 100%; padding: 6px; font-size: 11px;">📥 Extract</button>
+                            </div>
+                            <div class="notes-display" id="upload-display" style="min-height: 60px; padding: 8px; font-size: 11px;">
+                                <p>Paste a link to extract content.</p>
+                            </div>
+                            <select id="upload-note-subject" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-top: 10px; font-size: 11px;">
+                                <option value="general">Subject</option>
+                                <option value="math">Math</option>
+                                <option value="science">Science</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
                             </select>
-                        </div>
-                        
-                        <!-- Dynamic Input Area -->
-                        <div id="dynamic-input-area">
-                            <!-- Content will be populated by JS based on selection -->
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div style="display: flex; gap: 5px; margin-top: 10px;">
-                            <button id="save-note-btn" class="upload-btn" style="flex: 1; padding: 8px; font-size: 12px;">💾 Save Note</button>
-                            <button id="download-note-btn" class="upload-btn" style="padding: 8px; font-size: 12px;">📥 Download</button>
-                            <button id="share-note-btn" class="upload-btn" style="padding: 8px; font-size: 12px;">📤 Share</button>
                         </div>
                     </div>
                 </div>
@@ -264,7 +289,7 @@
                 </div>
             </div>
 
-            <!-- AI Assistant - Enhanced -->
+            <!-- AI Assistant - ChatGPT Style -->
             <div id="ai-page" class="page">
                 <div class="ai-container">
                     <div class="ai-hero">
@@ -276,7 +301,7 @@
                             </svg>
                         </div>
                         <h2>AI Study Assistant</h2>
-                        <p class="ai-subtitle">Your intelligent learning companion</p>
+                        <p class="ai-subtitle">Powered by advanced learning algorithms</p>
                     </div>
 
                     <!-- Interchangeable AI Modules -->
@@ -317,45 +342,26 @@
                         </button>
                     </div>
 
-                    <div class="ai-chat-interface">
-                        <!-- AI Chat Sidebar -->
-                        <div class="ai-chat-sidebar">
-                            <div class="ai-sidebar-header">
-                                <h3>AI Chats</h3>
-                                <div class="ai-folder-tabs">
-                                    <button class="folder-tab active" data-folder="recent">Recent</button>
-                                    <button class="folder-tab" data-folder="archived">Archived</button>
-                                    <button class="folder-tab" data-folder="images">Images</button>
-                                    <button class="folder-tab" data-folder="deleted">Deleted</button>
-                                </div>
-                            </div>
-                            <div class="ai-chat-list" id="ai-chat-list">
-                                <!-- AI chats will be populated here -->
+                    <div class="ai-chat-preview">
+                        <div class="ai-response-area" id="ai-response">
+                            <div class="sample-response" id="module-examples">
+                                <p><strong>📚 Homework Helper Examples:</strong></p>
+                                <ul>
+                                    <li>"Help me solve 3x² + 5x - 2 = 0"</li>
+                                    <li>"Explain the Pythagorean theorem step by step"</li>
+                                    <li>"How do I balance this chemical equation?"</li>
+                                    <li>"Can you check my essay for grammar errors?"</li>
+                                </ul>
                             </div>
                         </div>
-                        
-                        <!-- AI Chat Main -->
-                        <div class="ai-chat-main">
-                            <div class="ai-response-area" id="ai-response">
-                                <div class="sample-response" id="module-examples">
-                                    <p><strong>📚 Homework Helper Examples:</strong></p>
-                                    <ul>
-                                        <li>"Help me solve 3x² + 5x - 2 = 0"</li>
-                                        <li>"Explain the Pythagorean theorem step by step"</li>
-                                        <li>"How do I balance this chemical equation?"</li>
-                                        <li>"Can you check my essay for grammar errors?"</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="chat-input-container">
-                                <input type="text" placeholder="Ask me anything about your studies..." id="ai-input">
-                                <button class="send-btn" id="ai-send-btn">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                    </svg>
-                                </button>
-                            </div>
+                        <div class="chat-input-container">
+                            <input type="text" placeholder="Ask me anything about your studies..." id="ai-input">
+                            <button class="send-btn" id="ai-send-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -430,3 +436,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
