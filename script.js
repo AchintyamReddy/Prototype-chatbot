@@ -1,20 +1,17 @@
 // ClassConnect - Final Accessible Version
 // Features: ChatGPT-style AI, Editable Calendar, Color-coded Workload, Removed Teachers Widget
-
 const teachers = [
     { id: 1, name: "Dr. Sarah Johnson", subjects: ["Math", "Physics"], grade: "Grade 8", initials: "SJ", color: "#5e72e4", image: "media/teachers/sarah-johnson.jpg" },
     { id: 2, name: "Prof. Michael Chen", subjects: ["Biology", "Chemistry"], grade: "Grade 8", initials: "MC", color: "#11cdef", image: "media/teachers/michael-chen.jpg" },
     { id: 3, name: "Ms. Emily Rodriguez", subjects: ["English", "Literature"], grade: "Grade 8", initials: "ER", color: "#2dce89", image: "media/teachers/emily-rodriguez.jpg" },
     { id: 4, name: "Mr. James Williams", subjects: ["History", "Geography"], grade: "Grade 8", initials: "JW", color: "#fb6340", image: "media/teachers/james-williams.jpg" }
 ];
-
 const classmates = [
     { id: 1, name: "Emma Wilson", status: "online", initials: "EW", color: "#5e72e4", image: "media/students/emma-wilson.jpg" },
     { id: 2, name: "Liam Martinez", status: "online", initials: "LM", color: "#11cdef", image: "media/students/liam-martinez.jpg" },
     { id: 3, name: "Olivia Anderson", status: "idle", initials: "OA", color: "#2dce89", image: "media/students/olivia-anderson.jpg" },
     { id: 4, name: "Noah Taylor", status: "offline", initials: "NT", color: "#fb6340", image: "media/students/noah-taylor.jpg" }
 ];
-
 // Sample summative events for calendar (tests, quizzes, projects only)
 const summativeEvents = [
     { date: "2025-04-10", title: "Math Quiz", subject: "math", type: "quiz" },
@@ -24,7 +21,6 @@ const summativeEvents = [
     { date: "2025-04-25", title: "Math Test", subject: "math", type: "test" },
     { date: "2025-04-28", title: "Science Project", subject: "science", type: "project" }
 ];
-
 // Formative assessments for workload scan
 const formativeAssessments = [
     { date: "2025-04-08", title: "Math Homework", subject: "math", type: "homework" },
@@ -37,7 +33,6 @@ const formativeAssessments = [
     { date: "2025-04-22", title: "History Research", subject: "history", type: "research" },
     { date: "2025-04-26", title: "Math Review", subject: "math", type: "review" }
 ];
-
 const problemBanks = {
     "math": [
         { q: "Solve for x: 2x + 5 = 15", a: "5", hint: "Subtract 5 from both sides, then divide by 2" },
@@ -88,7 +83,6 @@ const problemBanks = {
         { q: "What ancient empire was ruled by Julius Caesar?", a: "rome", hint: "Later became Roman Empire" }
     ]
 };
-
 // DOM Elements
 const navButtons = document.querySelectorAll('.nav-btn');
 const pages = document.querySelectorAll('.page');
@@ -99,7 +93,6 @@ const aiResponse = document.getElementById('ai-response');
 const aiSendBtn = document.getElementById('ai-send-btn');
 const moduleButtons = document.querySelectorAll('.module-btn');
 const moduleExamples = document.getElementById('module-examples');
-
 // Home page elements
 const prevWeekBtn = document.getElementById('prev-week');
 const nextWeekBtn = document.getElementById('next-week');
@@ -126,13 +119,11 @@ const eventTitle = document.getElementById('event-title');
 const eventSubject = document.getElementById('event-subject');
 const eventType = document.getElementById('event-type');
 const saveEventBtn = document.getElementById('save-event-btn');
-
 // Streak elements
 const currentStreakElement = document.getElementById('current-streak');
 const streakModal = document.getElementById('streak-modal');
 const closeStreakBtn = document.getElementById('close-streak');
 const confettiContainer = document.getElementById('confetti-container');
-
 // Chat elements
 const chatSessions = document.getElementById('chat-sessions');
 const chatMain = document.getElementById('chat-main');
@@ -142,7 +133,6 @@ const chatInputArea = document.getElementById('chat-input-area');
 const messageInput = document.getElementById('message-input');
 const sendMessageBtn = document.getElementById('send-message');
 const createGroupBtn = document.getElementById('create-group');
-
 // Teacher chat elements
 const teacherSessions = document.getElementById('teacher-sessions');
 const teacherChatMain = document.getElementById('teacher-chat-main');
@@ -152,22 +142,31 @@ const teacherChatInputArea = document.getElementById('teacher-chat-input-area');
 const teacherMessageInput = document.getElementById('teacher-message-input');
 const sendTeacherMessageBtn = document.getElementById('send-teacher-message');
 const searchTeachers = document.getElementById('search-teachers');
-
 // Notes page elements
 const searchNotes = document.getElementById('search-notes');
 const generatePracticeTestBtn = document.getElementById('generate-practice-test');
 const subjectsContainer = document.getElementById('subjects-container');
-
 // Modal elements
 const groupModal = document.getElementById('group-modal');
 const closeModal = document.querySelector('.close');
 const groupNameInput = document.getElementById('group-name');
 const memberCheckboxes = document.getElementById('member-checkboxes');
 const createGroupSubmitBtn = document.getElementById('create-group-btn');
-
+// AI Assistant sections
+const sectionTabs = document.querySelectorAll('.section-tab');
+const sectionPanels = document.querySelectorAll('.section-panel');
+const recentChatsContainer = document.getElementById('recent-chats');
+const achievedChatsContainer = document.getElementById('achieved-chats');
+const imageChatsContainer = document.getElementById('image-chats');
+const deletedChatsContainer = document.getElementById('deleted-chats');
+// New elements for advanced note taker
+const uploadNoteFile = document.getElementById('note-file');
+const uploadNoteBtn = document.getElementById('upload-note');
+const urlNoteSubject = document.getElementById('url-note-subject');
+const videoUrl = document.getElementById('video-url');
+const generateNotesBtn = document.getElementById('generate-notes');
 // Notifications
 const notificationsContainer = document.getElementById('notifications-container');
-
 // State variables
 let currentClassmate = null;
 let currentTeacher = null;
@@ -186,6 +185,13 @@ let streakCount = parseInt(localStorage.getItem('classConnectStreak') || '0');
 let lastActiveDate = localStorage.getItem('classConnectLastActive');
 let hasShownTodayNotification = false;
 let currentEvents = [...summativeEvents]; // Make it mutable
+// AI Assistant state
+let aiChats = {
+    recent: [],
+    achieved: [],
+    images: [],
+    deleted: []
+};
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -204,18 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNotesDisplay();
     checkStreakMilestone();
     updateWorkloadScan();
+    initializeAIScrollableSections();
 });
 
 // Streak System
 function initializeStreakSystem() {
     const today = new Date().toDateString();
     currentStreakElement.textContent = streakCount;
-    
     if (lastActiveDate) {
         const lastDate = new Date(lastActiveDate);
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        
         if (lastDate.toDateString() === yesterday.toDateString()) {
             // Consecutive day - keep streak going
         } else if (lastDate.toDateString() !== today) {
@@ -225,9 +230,7 @@ function initializeStreakSystem() {
             currentStreakElement.textContent = '0';
         }
     }
-    
     localStorage.setItem('classConnectLastActive', today);
-    
     navButtons.forEach(btn => {
         btn.addEventListener('click', recordActivity);
     });
@@ -238,7 +241,6 @@ function initializeStreakSystem() {
 function recordActivity() {
     const today = new Date().toDateString();
     const lastActive = localStorage.getItem('classConnectLastActive');
-    
     if (lastActive !== today) {
         streakCount++;
         localStorage.setItem('classConnectStreak', streakCount.toString());
@@ -258,11 +260,9 @@ function showStreakCelebration(days) {
     streakModal.style.display = 'block';
     document.getElementById('streak-count').textContent = days;
     createConfetti();
-    
     closeStreakBtn.onclick = () => {
         streakModal.style.display = 'none';
     };
-    
     window.addEventListener('click', (event) => {
         if (event.target === streakModal) {
             streakModal.style.display = 'none';
@@ -273,7 +273,6 @@ function showStreakCelebration(days) {
 function createConfetti() {
     confettiContainer.innerHTML = '';
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
-    
     for (let i = 0; i < 100; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
@@ -291,7 +290,6 @@ function initializeNavigation() {
         button.addEventListener('click', () => {
             const targetPage = button.getAttribute('data-page');
             switchPage(targetPage);
-            
             navButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             recordActivity();
@@ -303,12 +301,10 @@ function switchPage(pageName) {
     pages.forEach(page => {
         page.classList.remove('active');
     });
-    
     const targetPage = document.getElementById(`${pageName}-page`);
     if (targetPage) {
         targetPage.classList.add('active');
     }
-    
     if (pageName === 'chat' && currentClassmate) {
         showChatInterface(currentClassmate);
     } else if (pageName === 'teachers' && currentTeacher) {
@@ -316,7 +312,6 @@ function switchPage(pageName) {
     } else if (pageName === 'notes') {
         renderNotesBySubject();
     }
-    
     recordActivity();
 }
 
@@ -333,7 +328,6 @@ function initializeStudentProfile() {
 // Classmates Chat
 function initializeClassmates() {
     renderChatSessions();
-    
     if (searchClassmates) {
         searchClassmates.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
@@ -343,7 +337,6 @@ function initializeClassmates() {
             renderChatSessions(filteredClassmates);
         });
     }
-    
     if (createGroupBtn) {
         createGroupBtn.addEventListener('click', () => {
             groupModal.style.display = 'block';
@@ -356,13 +349,11 @@ function initializeClassmates() {
 function renderChatSessions(filteredClassmates = classmates) {
     if (!chatSessions) return;
     chatSessions.innerHTML = '';
-    
     const sortedClassmates = [...filteredClassmates].sort((a, b) => {
         const timeA = chatHistory[a.id] ? chatHistory[a.id][chatHistory[a.id].length - 1]?.time : 0;
         const timeB = chatHistory[b.id] ? chatHistory[b.id][chatHistory[b.id].length - 1]?.time : 0;
         return timeB - timeA;
     });
-    
     sortedClassmates.forEach(classmate => {
         const session = createChatSession(classmate);
         chatSessions.appendChild(session);
@@ -373,10 +364,8 @@ function createChatSession(classmate) {
     const session = document.createElement('div');
     session.className = `chat-session ${classmate.status === 'idle' ? 'chat-session-idle' : ''}`;
     session.dataset.id = classmate.id;
-    
     const hasUnread = Math.random() > 0.7;
     if (hasUnread) session.classList.add('unread');
-    
     let lastMessage = "No messages yet";
     let lastMessageTime = "";
     if (chatHistory[classmate.id] && chatHistory[classmate.id].length > 0) {
@@ -384,7 +373,6 @@ function createChatSession(classmate) {
         lastMessage = lastMsg.text.substring(0, 30) + (lastMsg.text.length > 30 ? "..." : "");
         lastMessageTime = new Date(lastMsg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-    
     session.innerHTML = `
         <div class="chat-session-avatar" style="background: ${classmate.color}">
             <img src="${classmate.image}" alt="${classmate.name}" class="chat-session-avatar-img" onerror="this.style.display='none'">
@@ -396,7 +384,6 @@ function createChatSession(classmate) {
         </div>
         <span class="chat-session-time">${lastMessageTime}</span>
     `;
-    
     session.addEventListener('click', () => {
         document.querySelectorAll('.chat-session').forEach(el => el.classList.remove('active'));
         session.classList.add('active');
@@ -404,7 +391,6 @@ function createChatSession(classmate) {
         showChatInterface(classmate);
         recordActivity();
     });
-    
     return session;
 }
 
@@ -412,15 +398,12 @@ function showChatInterface(classmate) {
     chatWelcome.style.display = 'none';
     chatMessages.style.display = 'flex';
     chatInputArea.style.display = 'block';
-    
     if (!chatHistory[classmate.id]) {
         chatHistory[classmate.id] = [
             { text: `Hi ${classmate.name}! How can I help you with our assignment?`, type: 'received', time: new Date(Date.now() - 3600000) }
         ];
     }
-    
     renderChatHistory(classmate.id);
-    
     sendMessageBtn.onclick = () => sendMessage(classmate.id, false);
     messageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -428,7 +411,6 @@ function showChatInterface(classmate) {
             sendMessage(classmate.id, false);
         }
     });
-    
     recordActivity();
 }
 
@@ -444,10 +426,8 @@ function renderChatHistory(classmateId) {
 function sendMessage(classmateId, isTeacher = false) {
     const text = isTeacher ? teacherMessageInput.value.trim() : messageInput.value.trim();
     if (!text) return;
-    
     const now = new Date();
     const messageObj = { text, type: 'sent', time: now };
-    
     if (isTeacher) {
         teacherChatHistory[classmateId].push(messageObj);
         addMessageToChat(text, 'sent', now, true);
@@ -457,14 +437,11 @@ function sendMessage(classmateId, isTeacher = false) {
         addMessageToChat(text, 'sent', now, false);
         messageInput.value = '';
     }
-    
     renderChatSessions();
-    
     if (Math.random() > 0.5 && !hasShownTodayNotification) {
         showNotification("New Message", `${isTeacher ? 'Teacher' : 'Classmate'} replied to your message!`, "💬");
         hasShownTodayNotification = true;
     }
-    
     setTimeout(() => {
         const responses = [
             "That's a great point!",
@@ -480,7 +457,6 @@ function sendMessage(classmateId, isTeacher = false) {
         ];
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
         const responseObj = { text: randomResponse, type: 'received', time: new Date() };
-        
         if (isTeacher) {
             teacherChatHistory[classmate.id].push(responseObj);
             addMessageToChat(randomResponse, 'received', new Date(), true);
@@ -488,12 +464,10 @@ function sendMessage(classmateId, isTeacher = false) {
             chatHistory[classmate.id].push(responseObj);
             addMessageToChat(randomResponse, 'received', new Date(), false);
         }
-        
         renderChatSessions();
         if (isTeacher) {
             renderTeacherSessions();
         }
-        
         recordActivity();
     }, 1000);
 }
@@ -514,7 +488,6 @@ function formatTime(date) {
 // Teacher Chats
 function initializeTeacherChats() {
     renderTeacherSessions();
-    
     if (searchTeachers) {
         searchTeachers.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
@@ -529,13 +502,11 @@ function initializeTeacherChats() {
 function renderTeacherSessions(filteredTeachers = teachers) {
     if (!teacherSessions) return;
     teacherSessions.innerHTML = '';
-    
     const sortedTeachers = [...filteredTeachers].sort((a, b) => {
         const timeA = teacherChatHistory[a.id] ? teacherChatHistory[a.id][teacherChatHistory[a.id].length - 1]?.time : 0;
         const timeB = teacherChatHistory[b.id] ? teacherChatHistory[b.id][teacherChatHistory[b.id].length - 1]?.time : 0;
         return timeB - timeA;
     });
-    
     sortedTeachers.forEach(teacher => {
         const session = createTeacherSession(teacher);
         teacherSessions.appendChild(session);
@@ -546,10 +517,8 @@ function createTeacherSession(teacher) {
     const session = document.createElement('div');
     session.className = 'chat-session';
     session.dataset.id = teacher.id;
-    
     const hasUnread = Math.random() > 0.5;
     if (hasUnread) session.classList.add('unread');
-    
     let lastMessage = "No messages yet";
     let lastMessageTime = "";
     if (teacherChatHistory[teacher.id] && teacherChatHistory[teacher.id].length > 0) {
@@ -557,7 +526,6 @@ function createTeacherSession(teacher) {
         lastMessage = lastMsg.text.substring(0, 30) + (lastMsg.text.length > 30 ? "..." : "");
         lastMessageTime = new Date(lastMsg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-    
     session.innerHTML = `
         <div class="chat-session-avatar" style="background: ${teacher.color}">
             <img src="${teacher.image}" alt="${teacher.name}" class="chat-session-avatar-img" onerror="this.style.display='none'">
@@ -569,7 +537,6 @@ function createTeacherSession(teacher) {
         </div>
         <span class="chat-session-time">${lastMessageTime}</span>
     `;
-    
     session.addEventListener('click', () => {
         document.querySelectorAll('.chat-session').forEach(el => el.classList.remove('active'));
         session.classList.add('active');
@@ -577,7 +544,6 @@ function createTeacherSession(teacher) {
         showTeacherChatInterface(teacher);
         recordActivity();
     });
-    
     return session;
 }
 
@@ -585,16 +551,13 @@ function showTeacherChatInterface(teacher) {
     teacherChatWelcome.style.display = 'none';
     teacherChatMessages.style.display = 'flex';
     teacherChatInputArea.style.display = 'block';
-    
     if (!teacherChatHistory[teacher.id]) {
         teacherChatHistory[teacher.id] = [
             { text: `Hello ${teacher.name}! I have a question about ${teacher.subjects[0]}.`, type: 'sent', time: new Date(Date.now() - 7200000) },
             { text: `Hi! I'm happy to help. What's your question?`, type: 'received', time: new Date(Date.now() - 3600000) }
         ];
     }
-    
     renderTeacherChatHistory(teacher.id);
-    
     sendTeacherMessageBtn.onclick = () => sendMessage(teacher.id, true);
     teacherMessageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -602,7 +565,6 @@ function showTeacherChatInterface(teacher) {
             sendMessage(teacher.id, true);
         }
     });
-    
     recordActivity();
 }
 
@@ -618,7 +580,6 @@ function renderTeacherChatHistory(teacherId) {
 // Editable Calendar Widget
 function initializeCalendar() {
     if (!compactCalendar) return;
-    
     if (prevWeekBtn) {
         prevWeekBtn.addEventListener('click', () => {
             currentDate.setDate(currentDate.getDate() - 7);
@@ -626,7 +587,6 @@ function initializeCalendar() {
             recordActivity();
         });
     }
-    
     if (nextWeekBtn) {
         nextWeekBtn.addEventListener('click', () => {
             currentDate.setDate(currentDate.getDate() + 7);
@@ -634,7 +594,6 @@ function initializeCalendar() {
             recordActivity();
         });
     }
-    
     if (addEventBtn) {
         addEventBtn.addEventListener('click', () => {
             eventModal.style.display = 'block';
@@ -644,33 +603,25 @@ function initializeCalendar() {
             eventDate.value = tomorrow.toISOString().split('T')[0];
         });
     }
-    
     renderCompactCalendar();
 }
 
 function renderCompactCalendar() {
     if (!compactCalendar) return;
-    
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-    
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     currentWeekDisplay.textContent = `📅 Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    
     compactCalendar.innerHTML = '';
-    
     for (let i = 0; i < 7; i++) {
         const dayDate = new Date(startOfWeek);
         dayDate.setDate(startOfWeek.getDate() + i);
-        
         const dayColumn = document.createElement('div');
         dayColumn.className = 'compact-day-column';
         dayColumn.dataset.date = formatDate(dayDate);
-        
         const isToday = dayDate.toDateString() === new Date().toDateString();
         const dayHeaderClass = isToday ? 'compact-day-header today' : 'compact-day-header';
-        
         dayColumn.innerHTML = `
             <div class="${dayHeaderClass}">
                 <div class="compact-day-name">${dayDate.toLocaleDateString('en-US', { weekday: 'short' })}</div>
@@ -678,22 +629,18 @@ function renderCompactCalendar() {
             </div>
             <div class="compact-day-events" id="compact-day-events-${formatDate(dayDate)}"></div>
         `;
-        
         // Add click event to add event to this day
         dayColumn.addEventListener('click', () => {
             eventModal.style.display = 'block';
             eventDate.value = formatDate(dayDate);
         });
-        
         compactCalendar.appendChild(dayColumn);
     }
-    
     // Add SUMMATIVE events to days
     currentEvents.forEach(event => {
         const eventDate = new Date(event.date);
         const eventStartOfWeek = new Date(eventDate);
         eventStartOfWeek.setDate(eventDate.getDate() - eventDate.getDay());
-        
         if (eventStartOfWeek.getTime() === startOfWeek.getTime()) {
             const eventsContainer = document.getElementById(`compact-day-events-${formatDate(eventDate)}`);
             if (eventsContainer) {
@@ -701,14 +648,12 @@ function renderCompactCalendar() {
                 eventElement.className = `compact-event-item ${event.type}`;
                 eventElement.title = `${event.title} (${event.subject})`;
                 eventElement.textContent = event.title;
-                
                 // Add click to edit event
                 eventElement.addEventListener('click', (e) => {
                     e.stopPropagation();
                     // In a real app, you'd open edit modal
                     alert(`Edit ${event.title} (${event.type})`);
                 });
-                
                 eventsContainer.appendChild(eventElement);
             }
         }
@@ -724,39 +669,42 @@ function formatDate(date) {
 
 // Event Modal
 function initializeEventModal() {
+    // Update event subject dropdown to include Language
+    const eventSubjectOptions = `
+        <option value="math">Math</option>
+        <option value="science">Science</option>
+        <option value="english">English</option>
+        <option value="history">History</option>
+        <option value="language">Language</option>
+    `;
+    eventSubject.innerHTML = eventSubjectOptions;
+    
     if (eventCloseBtn) {
         eventCloseBtn.addEventListener('click', () => {
             eventModal.style.display = 'none';
         });
     }
-    
     if (saveEventBtn) {
         saveEventBtn.addEventListener('click', () => {
             const date = eventDate.value;
             const title = eventTitle.value.trim();
             const subject = eventSubject.value;
             const type = eventType.value;
-            
             if (!date || !title) {
                 alert('Please fill in all fields!');
                 return;
             }
-            
             // Add to events array
             currentEvents.push({ date, title, subject, type });
-            
             // Save to localStorage
             localStorage.setItem('classConnectEvents', JSON.stringify(currentEvents));
-            
             // Close modal and refresh calendar
             eventModal.style.display = 'none';
             renderCompactCalendar();
-            
             alert('Assessment added successfully!');
             recordActivity();
         });
     }
-    
     // Close modal if clicked outside
     window.addEventListener('click', (event) => {
         if (event.target === eventModal) {
@@ -771,11 +719,9 @@ function updateWorkloadScan() {
     let urgentCount = 0; // ≤2 days
     let upcomingCount = 0; // 3-4 days  
     let futureCount = 0; // 5+ days
-    
     formativeAssessments.forEach(assessment => {
         const assessmentDate = new Date(assessment.date);
         const daysUntil = Math.ceil((assessmentDate - today) / (1000 * 60 * 60 * 24));
-        
         if (daysUntil >= 0) {
             if (daysUntil <= 2) {
                 urgentCount++;
@@ -786,7 +732,6 @@ function updateWorkloadScan() {
             }
         }
     });
-    
     // Update the scan widget
     const scanItems = document.querySelectorAll('.scan-item');
     if (scanItems[0]) scanItems[0].querySelector('.scan-value').textContent = `${urgentCount} assessments`;
@@ -796,21 +741,48 @@ function updateWorkloadScan() {
 
 // Compact Notes Widget
 function initializeNotesWidget() {
+    // Update subject dropdowns to include Language
+    const subjectOptions = `
+        <option value="general">Subject</option>
+        <option value="math">Math</option>
+        <option value="science">Science</option>
+        <option value="english">English</option>
+        <option value="history">History</option>
+        <option value="language">Language</option>
+    `;
+    
+    noteSubject.innerHTML = subjectOptions;
+    voiceNoteSubject.innerHTML = subjectOptions;
+    uploadNoteSubject.innerHTML = subjectOptions;
+    urlNoteSubject.innerHTML = subjectOptions;
+
+    // Add URL tab functionality
+    const urlTabBtn = document.querySelector('[data-tab="url"]');
+    if (urlTabBtn) {
+        urlTabBtn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            urlTabBtn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('url-tab').classList.add('active');
+            recordActivity();
+        });
+    }
+
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             tabButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
             const tabId = btn.getAttribute('data-tab');
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(`${tabId}-tab`).classList.add('active');
-            
             recordActivity();
         });
     });
-    
+
     if (saveTypedNoteBtn) {
         saveTypedNoteBtn.addEventListener('click', () => {
             const content = typedNotes.value.trim();
@@ -818,26 +790,23 @@ function initializeNotesWidget() {
                 alert('Please enter some notes first!');
                 return;
             }
-            
             const subject = noteSubject.value;
             if (subject === 'general') {
                 alert('Please select a subject for your notes!');
                 return;
             }
-            
             saveNote(content, 'Typed Note', subject);
             typedNotes.value = '';
             noteSubject.value = 'general';
         });
     }
-    
+
     // Speech Recognition
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-
         recognition.onresult = function(event) {
             if (isPaused) return;
             let transcript = '';
@@ -848,12 +817,10 @@ function initializeNotesWidget() {
             notesDisplay.innerHTML = `<p><strong>🎙️ Live Transcript:</strong><br>${transcript}</p>`;
             saveTranscriptBtn.disabled = false;
         };
-
         recognition.onerror = function(event) {
             console.error('Speech recognition error', event.error);
             notesDisplay.innerHTML = `<p style="color: red;">Error: ${event.error}</p>`;
         };
-
         recognition.onend = function() {
             if (isRecording && !isPaused) {
                 startRecordingBtn.textContent = "🎤 Start";
@@ -923,19 +890,15 @@ function initializeNotesWidget() {
                 alert('Please enter a URL first!');
                 return;
             }
-            
             uploadDisplay.innerHTML = "<p>🔍 Analyzing content... (simulated)</p>";
-            
             setTimeout(() => {
                 let extractedContent = "";
                 let subject = uploadNoteSubject.value;
-                
                 if (url.includes('youtube.com') || url.includes('youtu.be')) {
                     extractedContent = `Extracted key points from video: ${url.substring(0, 50)}...
 • Main concept 1: Brief summary
 • Main concept 2: Brief summary
 • Important terms: term1, term2, term3`;
-                    
                     if (subject === 'general') {
                         subject = detectSubjectFromUrl(url);
                     }
@@ -943,7 +906,6 @@ function initializeNotesWidget() {
                     extractedContent = `Extracted educational content from social media: ${url.substring(0, 50)}...
 • Key insight: Brief summary
 • Related concept: Connection to academic subject`;
-                    
                     if (subject === 'general') {
                         subject = 'other';
                     }
@@ -954,24 +916,69 @@ function initializeNotesWidget() {
   1. First important point
   2. Second important point
   3. Third important point`;
-                    
                     if (subject === 'general') {
                         subject = detectSubjectFromUrl(url);
                     }
                 }
-                
                 if (subject === 'general') {
                     alert('Please select a subject for your extracted note!');
                     uploadDisplay.innerHTML = "<p>Paste a link to extract key points and save as notes.</p>";
                     return;
                 }
-                
                 saveNote(extractedContent, 'Extracted Content', subject);
                 articleUrl.value = '';
                 uploadNoteSubject.value = 'general';
             }, 2000);
-            
             recordActivity();
+        });
+    }
+
+    // File upload functionality
+    if (uploadNoteBtn) {
+        uploadNoteBtn.addEventListener('click', () => {
+            const file = uploadNoteFile.files[0];
+            if (!file) {
+                alert('Please select a file first!');
+                return;
+            }
+            const subject = uploadNoteSubject.value;
+            if (subject === 'general') {
+                alert('Please select a subject for your uploaded file!');
+                return;
+            }
+            
+            // Simulate file processing
+            uploadDisplay.innerHTML = `<p>📤 Uploading ${file.name}... (simulated)</p>`;
+            setTimeout(() => {
+                const content = `File: ${file.name}\nType: ${file.type}\nSize: ${(file.size / 1024).toFixed(2)} KB\n\nExtracted content: This is simulated content from the uploaded file.`;
+                saveNote(content, 'Uploaded File', subject);
+                uploadNoteFile.value = '';
+                uploadNoteSubject.value = 'general';
+            }, 1500);
+        });
+    }
+
+    // Video URL functionality
+    if (generateNotesBtn) {
+        generateNotesBtn.addEventListener('click', () => {
+            const url = videoUrl.value.trim();
+            if (!url) {
+                alert('Please enter a video URL first!');
+                return;
+            }
+            const subject = urlNoteSubject.value;
+            if (subject === 'general') {
+                alert('Please select a subject for your video notes!');
+                return;
+            }
+            
+            uploadDisplay.innerHTML = `<p>🎬 Generating notes from video: ${url.substring(0, 30)}... (simulated)</p>`;
+            setTimeout(() => {
+                const content = `Generated notes from video: ${url}\n\n• Key concept 1: Brief summary\n• Key concept 2: Brief summary\n• Important terms: term1, term2\n• Example: Example related to the concept\n\nThese notes were automatically generated from the video content.`;
+                saveNote(content, 'Video Notes', subject);
+                videoUrl.value = '';
+                urlNoteSubject.value = 'general';
+            }, 2000);
         });
     }
 }
@@ -982,6 +989,7 @@ function detectSubjectFromUrl(url) {
     if (url.includes('science') || url.includes('biology') || url.includes('chemistry')) return 'science';
     if (url.includes('english') || url.includes('literature') || url.includes('writing')) return 'english';
     if (url.includes('history') || url.includes('geography') || url.includes('social')) return 'history';
+    if (url.includes('language') || url.includes('french') || url.includes('spanish') || url.includes('german')) return 'language';
     return 'other';
 }
 
@@ -993,11 +1001,9 @@ function saveNote(content, type, subject = 'general') {
         subject: subject,
         timestamp: new Date().toLocaleString()
     };
-    
     savedNotes.push(note);
     localStorage.setItem('classConnectNotes', JSON.stringify(savedNotes));
     updateNotesDisplay();
-    
     if (type === 'Typed Note') {
         typedNotes.value = '';
         noteSubject.value = 'general';
@@ -1006,12 +1012,13 @@ function saveNote(content, type, subject = 'general') {
         currentTranscript = '';
         saveTranscriptBtn.disabled = true;
         voiceNoteSubject.value = 'general';
-    } else if (type === 'Extracted Content') {
+    } else if (type === 'Extracted Content' || type === 'Uploaded File' || type === 'Video Notes') {
         uploadDisplay.innerHTML = `<p>✅ ${type} saved in ${subject} section!</p>`;
-        articleUrl.value = '';
+        articleUrl && (articleUrl.value = '');
+        videoUrl && (videoUrl.value = '');
         uploadNoteSubject.value = 'general';
+        urlNoteSubject.value = 'general';
     }
-    
     recordActivity();
 }
 
@@ -1026,7 +1033,6 @@ function updateNotesDisplay() {
             li.addEventListener('click', () => {
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 document.querySelector(`[data-tab="${getActiveTab()}"]`).classList.add('active');
-                
                 if (getActiveTab() === 'type') {
                     typedNotes.value = note.content;
                 } else if (getActiveTab() === 'speak') {
@@ -1057,14 +1063,11 @@ function initializeAIAssistant() {
             moduleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentAIModule = btn.getAttribute('data-module');
-            
             // Update examples based on selected module
             updateModuleExamples();
-            
             recordActivity();
         });
     });
-    
     if (aiSendBtn && aiInput) {
         aiSendBtn.addEventListener('click', handleAIQuery);
         aiInput.addEventListener('keypress', (e) => {
@@ -1073,6 +1076,171 @@ function initializeAIAssistant() {
             }
         });
     }
+}
+
+// Initialize AI Assistant Sections
+function initializeAIScrollableSections() {
+    // Add event listeners to section tabs
+    sectionTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and panels
+            sectionTabs.forEach(t => t.classList.remove('active'));
+            sectionPanels.forEach(p => p.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding panel
+            const sectionId = tab.getAttribute('data-section');
+            const panel = document.getElementById(`${sectionId}-section`);
+            if (panel) {
+                panel.classList.add('active');
+            }
+            
+            // Update content based on selected section
+            updateSectionContent(sectionId);
+        });
+    });
+    
+    // Initialize with recent section active
+    document.querySelector('.section-tab[data-section="recent"]').classList.add('active');
+    document.getElementById('recent-section').classList.add('active');
+    updateSectionContent('recent');
+}
+
+function updateSectionContent(sectionId) {
+    const container = document.getElementById(`${sectionId}-chats`);
+    if (!container) return;
+    
+    // Clear container
+    container.innerHTML = '';
+    
+    // Get data for the section
+    const sectionData = aiChats[sectionId];
+    
+    // Create items based on section type
+    if (sectionData.length === 0) {
+        container.innerHTML = `<div class="section-item">No items in this section yet</div>`;
+        return;
+    }
+    
+    sectionData.forEach((item, index) => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'section-item';
+        itemElement.textContent = `${index + 1}. ${item.title || item.query || 'Chat'}`;
+        itemElement.addEventListener('click', () => {
+            // Handle click on chat item
+            showChatDetail(item, sectionId);
+        });
+        container.appendChild(itemElement);
+    });
+}
+
+function showChatDetail(chatItem, sectionId) {
+    // For now, just log the chat item
+    console.log(`Showing details for chat in ${sectionId}:`, chatItem);
+    
+    // In a real app, you would show the full chat content
+    alert(`Chat details for: ${chatItem.title || chatItem.query}`);
+}
+
+function handleAIQuery() {
+    const query = aiInput.value.trim();
+    if (!query) return;
+    
+    // Create a new message element for the user's query
+    const userMessage = document.createElement('div');
+    userMessage.className = 'ai-message user-message';
+    userMessage.innerHTML = `<div class="message-content">${query}</div>`;
+    
+    // Create AI response container
+    const aiResponseDiv = document.createElement('div');
+    aiResponseDiv.className = 'ai-message ai-response';
+    aiResponseDiv.innerHTML = '<div class="message-content">🤔 Thinking...</div>';
+    
+    // Clear previous responses and add new conversation
+    aiResponse.innerHTML = '';
+    aiResponse.appendChild(userMessage);
+    aiResponse.appendChild(aiResponseDiv);
+    
+    // Add to recent chats
+    aiChats.recent.unshift({
+        id: Date.now(),
+        query: query,
+        timestamp: new Date().toLocaleString(),
+        module: currentAIModule
+    });
+    
+    // Process the query
+    setTimeout(() => {
+        const lowerQuery = query.toLowerCase();
+        let response = '';
+        let subject = detectSubjectFromText(query);
+        
+        // Handle any prompt gracefully with consistent responses
+        if (currentAIModule === 'homework') {
+            response = `I'd be happy to help with your ${subject} homework! Here's a step-by-step approach to solving problems like this:
+1. First, identify what type of problem this is
+2. Recall the relevant formulas or concepts
+3. Apply the concepts step by step
+4. Check your work for accuracy
+For your specific question about "${query}", I recommend starting with step 1. Would you like me to walk through a similar example?`;
+        } else if (currentAIModule === 'qna') {
+            response = `Great question about ${subject}! Here's a clear, detailed explanation:
+${getRandomExplanation(subject)}
+This concept is fundamental to understanding ${subject}. Would you like me to provide examples or dive deeper into any part?`;
+        } else if (currentAIModule === 'planner') {
+            response = `I'll help you create an effective study plan for ${subject}! Here's a personalized approach:
+• **Daily Goals**: Break down your material into manageable chunks
+• **Study Sessions**: 25-minute focused sessions with 5-minute breaks
+• **Review Schedule**: Review material after 1 day, 3 days, and 1 week
+• **Practice**: Include practice problems daily
+Based on your query "${query}", I suggest focusing on the most challenging topics first. Would you like me to create a detailed day-by-day schedule?`;
+        } else if (currentAIModule === 'exam') {
+            response = `Excellent! I'll help you prepare for your ${subject} exam. Here's what I recommend:
+1. **Diagnostic Test**: Take a quick 5-question quiz to identify weak areas
+2. **Targeted Review**: Focus on your weakest topics first
+3. **Practice Tests**: Take full-length practice exams under timed conditions
+4. **Review Mistakes**: Analyze every incorrect answer thoroughly
+For "${query}", I can generate a custom practice test right now. Just say "Generate practice test" and I'll create 10 questions tailored to your needs!`;
+        }
+        
+        // Update AI response with formatted answer
+        aiResponseDiv.innerHTML = `
+            <div class="message-content">
+                <div style="font-weight: bold; color: #5e72e4; margin-bottom: 10px;">AI ${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</div>
+                <div style="line-height: 1.6;">${response.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+        
+        // Update recent section content
+        updateSectionContent('recent');
+    }, 1000);
+    
+    aiInput.value = '';
+    recordActivity();
+}
+
+function detectSubjectFromText(text) {
+    text = text.toLowerCase();
+    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'Math';
+    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'Science';
+    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'English';
+    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'History';
+    if (text.includes('language') || text.includes('french') || text.includes('spanish') || text.includes('german')) return 'Language';
+    return 'your subject';
+}
+
+function getRandomExplanation(subject) {
+    const explanations = {
+        'Math': 'Mathematical concepts build upon each other. Understanding foundational principles like algebra and geometry is crucial for solving more complex problems. Always show your work and check your answers.',
+        'Science': 'Science is about understanding how the natural world works through observation, experimentation, and evidence-based reasoning. Focus on understanding concepts rather than just memorizing facts.',
+        'English': 'English involves analyzing literature, developing writing skills, and understanding language structure. Practice reading critically and writing clearly to improve your skills.',
+        'History': 'History helps us understand how past events shape our present world. Focus on causes, effects, and connections between events rather than just dates and names.',
+        'Language': 'Language learning involves developing reading, writing, speaking, and listening skills. Practice regularly and immerse yourself in the language to improve.',
+        'your subject': 'Learning any subject requires consistent practice, active engagement, and seeking help when needed. Break complex topics into smaller parts and build your understanding step by step.'
+    };
+    return explanations[subject] || explanations['your subject'];
 }
 
 function updateModuleExamples() {
@@ -1114,7 +1282,6 @@ function updateModuleExamples() {
             ]
         }
     };
-    
     const currentExamples = examples[currentAIModule];
     moduleExamples.innerHTML = `
         <p><strong>${currentExamples.title}</strong></p>
@@ -1122,75 +1289,6 @@ function updateModuleExamples() {
             ${currentExamples.prompts.map(prompt => `<li>${prompt}</li>`).join('')}
         </ul>
     `;
-}
-
-function handleAIQuery() {
-    const query = aiInput.value.trim();
-    if (!query) return;
-    
-    // Create a new message element for the user's query
-    const userMessage = document.createElement('div');
-    userMessage.className = 'ai-message user-message';
-    userMessage.innerHTML = `<div class="message-content">${query}</div>`;
-    
-    // Create AI response container
-    const aiResponseDiv = document.createElement('div');
-    aiResponseDiv.className = 'ai-message ai-response';
-    aiResponseDiv.innerHTML = '<div class="message-content">🤔 Thinking...</div>';
-    
-    // Clear previous responses and add new conversation
-    aiResponse.innerHTML = '';
-    aiResponse.appendChild(userMessage);
-    aiResponse.appendChild(aiResponseDiv);
-    
-    // Process the query
-    setTimeout(() => {
-        const lowerQuery = query.toLowerCase();
-        let response = '';
-        let subject = detectSubjectFromText(query);
-        
-        // Handle any prompt gracefully with consistent responses
-        if (currentAIModule === 'homework') {
-            response = `I'd be happy to help with your ${subject} homework! Here's a step-by-step approach to solving problems like this:\n\n1. First, identify what type of problem this is\n2. Recall the relevant formulas or concepts\n3. Apply the concepts step by step\n4. Check your work for accuracy\n\nFor your specific question about "${query}", I recommend starting with step 1. Would you like me to walk through a similar example?`;
-        } else if (currentAIModule === 'qna') {
-            response = `Great question about ${subject}! Here's a clear, detailed explanation:\n\n${getRandomExplanation(subject)}\n\nThis concept is fundamental to understanding ${subject}. Would you like me to provide examples or dive deeper into any part?`;
-        } else if (currentAIModule === 'planner') {
-            response = `I'll help you create an effective study plan for ${subject}! Here's a personalized approach:\n\n• **Daily Goals**: Break down your material into manageable chunks\n• **Study Sessions**: 25-minute focused sessions with 5-minute breaks\n• **Review Schedule**: Review material after 1 day, 3 days, and 1 week\n• **Practice**: Include practice problems daily\n\nBased on your query "${query}", I suggest focusing on the most challenging topics first. Would you like me to create a detailed day-by-day schedule?`;
-        } else if (currentAIModule === 'exam') {
-            response = `Excellent! I'll help you prepare for your ${subject} exam. Here's what I recommend:\n\n1. **Diagnostic Test**: Take a quick 5-question quiz to identify weak areas\n2. **Targeted Review**: Focus on your weakest topics first\n3. **Practice Tests**: Take full-length practice exams under timed conditions\n4. **Review Mistakes**: Analyze every incorrect answer thoroughly\n\nFor "${query}", I can generate a custom practice test right now. Just say "Generate practice test" and I'll create 10 questions tailored to your needs!`;
-        }
-        
-        // Update AI response with formatted answer
-        aiResponseDiv.innerHTML = `
-            <div class="message-content">
-                <div style="font-weight: bold; color: #5e72e4; margin-bottom: 10px;">AI ${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</div>
-                <div style="line-height: 1.6;">${response.replace(/\n/g, '<br>')}</div>
-            </div>
-        `;
-    }, 1000);
-    
-    aiInput.value = '';
-    recordActivity();
-}
-
-function detectSubjectFromText(text) {
-    text = text.toLowerCase();
-    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'Math';
-    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'Science';
-    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'English';
-    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'History';
-    return 'your subject';
-}
-
-function getRandomExplanation(subject) {
-    const explanations = {
-        'Math': 'Mathematical concepts build upon each other. Understanding foundational principles like algebra and geometry is crucial for solving more complex problems. Always show your work and check your answers.',
-        'Science': 'Science is about understanding how the natural world works through observation, experimentation, and evidence-based reasoning. Focus on understanding concepts rather than just memorizing facts.',
-        'English': 'English involves analyzing literature, developing writing skills, and understanding language structure. Practice reading critically and writing clearly to improve your skills.',
-        'History': 'History helps us understand how past events shape our present world. Focus on causes, effects, and connections between events rather than just dates and names.',
-        'your subject': 'Learning any subject requires consistent practice, active engagement, and seeking help when needed. Break complex topics into smaller parts and build your understanding step by step.'
-    };
-    return explanations[subject] || explanations['your subject'];
 }
 
 // Notes Page
@@ -1201,19 +1299,16 @@ function initializeNotesPage() {
             renderNotesBySubject(searchTerm);
         });
     }
-    
     if (generatePracticeTestBtn) {
         generatePracticeTestBtn.addEventListener('click', () => {
             if (savedNotes.length === 0) {
                 alert('You need to save some notes first before generating a practice test!');
                 return;
             }
-            
             const subjectCounts = {};
             savedNotes.forEach(note => {
                 subjectCounts[note.subject] = (subjectCounts[note.subject] || 0) + 1;
             });
-            
             let mostCommonSubject = 'math';
             let maxCount = 0;
             for (const subject in subjectCounts) {
@@ -1222,11 +1317,9 @@ function initializeNotesPage() {
                     mostCommonSubject = subject;
                 }
             }
-            
             // Switch to AI page and show practice test
             switchPage('ai');
             document.querySelector('.nav-btn[data-page="ai"]').classList.add('active');
-            
             aiResponse.innerHTML = `
                 <div style="padding: 15px; background: #f4f5f7; border-radius: 8px; margin-bottom: 12px;">
                     <p style="font-weight: bold; color: #32325d; margin-bottom: 8px;">Generated from your notes!</p>
@@ -1237,7 +1330,6 @@ function initializeNotesPage() {
                     <p style="line-height: 1.5; font-size: 13px;">Great! I've generated a 10-question practice test on ${mostCommonSubject} based on your saved notes. Let's begin!</p>
                 </div>
             `;
-            
             recordActivity();
         });
     }
@@ -1245,14 +1337,11 @@ function initializeNotesPage() {
 
 function renderNotesBySubject(searchTerm = '') {
     if (!subjectsContainer) return;
-    
     const notesBySubject = {};
-    const subjects = ['math', 'science', 'english', 'history', 'other', 'general'];
-    
+    const subjects = ['math', 'science', 'english', 'history', 'language', 'other', 'general'];
     subjects.forEach(subject => {
         notesBySubject[subject] = [];
     });
-    
     savedNotes.forEach(note => {
         if (!notesBySubject[note.subject]) {
             notesBySubject[note.subject] = [];
@@ -1270,7 +1359,6 @@ function renderNotesBySubject(searchTerm = '') {
     }
     
     const sortedSubjects = subjects.filter(subject => notesBySubject[subject].length > 0);
-    
     if (sortedSubjects.length === 0) {
         subjectsContainer.innerHTML = `
             <div class="no-notes-message">
@@ -1289,12 +1377,10 @@ function renderNotesBySubject(searchTerm = '') {
     }
     
     subjectsContainer.innerHTML = '';
-    
     sortedSubjects.forEach(subject => {
         const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
         const subjectSection = document.createElement('div');
         subjectSection.className = 'subject-section';
-        
         subjectSection.innerHTML = `
             <div class="subject-header">
                 <h3 class="subject-title">${subjectName}</h3>
@@ -1305,14 +1391,12 @@ function renderNotesBySubject(searchTerm = '') {
                 </div>
             </div>
         `;
-        
         subjectsContainer.appendChild(subjectSection);
         
         const notesGrid = subjectSection.querySelector(`#notes-grid-${subject}`);
         notesBySubject[subject].sort((a, b) => b.id - a.id).forEach(note => {
             const noteCard = document.createElement('div');
             noteCard.className = 'note-card';
-            
             noteCard.innerHTML = `
                 <div class="note-content">${note.content.substring(0, 100)}${note.content.length > 100 ? '...' : ''}</div>
                 <div class="note-meta">
@@ -1323,13 +1407,11 @@ function renderNotesBySubject(searchTerm = '') {
                     <button class="note-btn delete-note" data-id="${note.id}">Delete</button>
                 </div>
             `;
-            
             notesGrid.appendChild(noteCard);
         });
         
         const subjectHeader = subjectSection.querySelector('.subject-header');
         const subjectContent = subjectSection.querySelector('.subject-content');
-        
         subjectHeader.addEventListener('click', () => {
             subjectContent.style.display = subjectContent.style.display === 'none' ? 'block' : 'none';
             recordActivity();
@@ -1353,13 +1435,11 @@ function initializeGroupModal() {
     closeModal.addEventListener('click', () => {
         groupModal.style.display = 'none';
     });
-    
     window.addEventListener('click', (event) => {
         if (event.target === groupModal) {
             groupModal.style.display = 'none';
         }
     });
-    
     if (createGroupSubmitBtn) {
         createGroupSubmitBtn.addEventListener('click', () => {
             const groupName = groupNameInput.value.trim();
@@ -1367,17 +1447,14 @@ function initializeGroupModal() {
                 alert('Please enter a group name');
                 return;
             }
-            
             const selectedMembers = [];
             document.querySelectorAll('input[name="group-members"]:checked').forEach(checkbox => {
                 selectedMembers.push(checkbox.value);
             });
-            
             if (selectedMembers.length === 0) {
                 alert('Please select at least one member');
                 return;
             }
-            
             alert(`Study group "${groupName}" created with ${selectedMembers.length} members!`);
             groupModal.style.display = 'none';
             groupNameInput.value = '';
@@ -1409,7 +1486,6 @@ function initializeRealTimeNotifications() {
     formativeAssessments.forEach(assessment => {
         const assessmentDate = new Date(assessment.date);
         const daysUntil = Math.ceil((assessmentDate - today) / (1000 * 60 * 60 * 24));
-        
         if (daysUntil >= 0 && daysUntil <= 2 && !hasShownTodayNotification) {
             showNotification("Formative Assessment", `${assessment.title} is due in ${daysUntil} days!`, "📚");
             hasShownTodayNotification = true;
@@ -1421,10 +1497,8 @@ function showNotification(title, message, icon) {
     const notification = document.createElement('div');
     notification.className = 'notification-popup';
     notification.id = `notification-${++lastNotificationId}`;
-    
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
     notification.innerHTML = `
         <span class="notification-icon">${icon}</span>
         <div class="notification-content">
@@ -1434,9 +1508,7 @@ function showNotification(title, message, icon) {
         </div>
         <button class="notification-close">×</button>
     `;
-    
     notificationsContainer.appendChild(notification);
-    
     notification.querySelector('.notification-close').addEventListener('click', function() {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
@@ -1444,7 +1516,6 @@ function showNotification(title, message, icon) {
             notification.remove();
         }, 300);
     });
-    
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.opacity = '0';
