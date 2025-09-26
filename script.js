@@ -739,7 +739,7 @@ function updateWorkloadScan() {
     if (scanItems[2]) scanItems[2].querySelector('.scan-value').textContent = `${futureCount} assessments`;
 }
 
-// Compact Notes Widget
+// Compact Notes Widget - Enhanced Accessibility and Compactness
 function initializeNotesWidget() {
     // Update subject dropdowns to include Language
     const subjectOptions = `
