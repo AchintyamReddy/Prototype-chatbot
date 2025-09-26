@@ -166,6 +166,7 @@
                             <button class="tab-btn active" data-tab="type">⌨️ Type</button>
                             <button class="tab-btn" data-tab="speak">🎤 Speak</button>
                             <button class="tab-btn" data-tab="upload">🌐 Upload</button>
+                            <button class="tab-btn" data-tab="url">🔗 URL</button>
                         </div>
                         
                         <!-- Type Tab -->
@@ -178,6 +179,7 @@
                                     <option value="science">Science</option>
                                     <option value="english">English</option>
                                     <option value="history">History</option>
+                                    <option value="language">Language</option>
                                 </select>
                                 <button id="save-typed-note" class="upload-btn" style="padding: 6px 10px; font-size: 11px;">💾 Save</button>
                             </div>
@@ -199,17 +201,15 @@
                                 <option value="science">Science</option>
                                 <option value="english">English</option>
                                 <option value="history">History</option>
+                                <option value="language">Language</option>
                             </select>
                         </div>
                         
                         <!-- Upload Tab -->
                         <div class="tab-content" id="upload-tab">
                             <div style="margin-bottom: 10px;">
-                                <input type="text" id="article-url" placeholder="Paste URL or link" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 5px; font-size: 11px;">
-                                <button id="extract-content" class="upload-btn" style="width: 100%; padding: 6px; font-size: 11px;">📥 Extract</button>
-                            </div>
-                            <div class="notes-display" id="upload-display" style="min-height: 60px; padding: 8px; font-size: 11px;">
-                                <p>Paste a link to extract content.</p>
+                                <input type="file" id="note-file" accept=".pdf,.doc,.docx,.txt,.jpg,.png" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 5px; font-size: 11px;">
+                                <button id="upload-note" class="upload-btn" style="width: 100%; padding: 6px; font-size: 11px;">📤 Upload</button>
                             </div>
                             <select id="upload-note-subject" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-top: 10px; font-size: 11px;">
                                 <option value="general">Subject</option>
@@ -217,6 +217,23 @@
                                 <option value="science">Science</option>
                                 <option value="english">English</option>
                                 <option value="history">History</option>
+                                <option value="language">Language</option>
+                            </select>
+                        </div>
+                        
+                        <!-- URL Tab -->
+                        <div class="tab-content" id="url-tab">
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="video-url" placeholder="Paste video URL for notes generation" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 5px; font-size: 11px;">
+                                <button id="generate-notes" class="upload-btn" style="width: 100%; padding: 6px; font-size: 11px;">📝 Generate Notes</button>
+                            </div>
+                            <select id="url-note-subject" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; margin-top: 10px; font-size: 11px;">
+                                <option value="general">Subject</option>
+                                <option value="math">Math</option>
+                                <option value="science">Science</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
+                                <option value="language">Language</option>
                             </select>
                         </div>
                     </div>
@@ -342,6 +359,58 @@
                         </button>
                     </div>
 
+                    <!-- AI Assistant Chat Sections -->
+                    <div class="ai-chat-sections">
+                        <div class="section-tabs">
+                            <button class="section-tab active" data-section="recent">Recent</button>
+                            <button class="section-tab" data-section="achieved">Achieved</button>
+                            <button class="section-tab" data-section="images">Images</button>
+                            <button class="section-tab" data-section="deleted">Deleted</button>
+                        </div>
+                        
+                        <div class="section-content">
+                            <!-- Recent Chats Section -->
+                            <div class="section-panel active" id="recent-section">
+                                <div class="section-header">
+                                    <h3>Recent Conversations</h3>
+                                </div>
+                                <div class="section-items" id="recent-chats">
+                                    <!-- Recent chats will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Achieved Chats Section -->
+                            <div class="section-panel" id="achieved-section">
+                                <div class="section-header">
+                                    <h3>Achieved Goals</h3>
+                                </div>
+                                <div class="section-items" id="achieved-chats">
+                                    <!-- Achieved chats will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Images Section -->
+                            <div class="section-panel" id="images-section">
+                                <div class="section-header">
+                                    <h3>Saved Images</h3>
+                                </div>
+                                <div class="section-items" id="image-chats">
+                                    <!-- Images will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Deleted Chats Section -->
+                            <div class="section-panel" id="deleted-section">
+                                <div class="section-header">
+                                    <h3>Deleted Chats</h3>
+                                </div>
+                                <div class="section-items" id="deleted-chats">
+                                    <!-- Deleted chats will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="ai-chat-preview">
                         <div class="ai-response-area" id="ai-response">
                             <div class="sample-response" id="module-examples">
@@ -405,6 +474,7 @@
                     <option value="science">Science</option>
                     <option value="english">English</option>
                     <option value="history">History</option>
+                    <option value="language">Language</option>
                 </select>
             </div>
             <div style="margin: 15px 0;">
@@ -436,4 +506,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
