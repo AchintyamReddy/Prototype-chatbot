@@ -152,13 +152,6 @@ const closeModal = document.querySelector('.close');
 const groupNameInput = document.getElementById('group-name');
 const memberCheckboxes = document.getElementById('member-checkboxes');
 const createGroupSubmitBtn = document.getElementById('create-group-btn');
-// AI Assistant sections
-const sectionTabs = document.querySelectorAll('.section-tab');
-const sectionPanels = document.querySelectorAll('.section-panel');
-const recentChatsContainer = document.getElementById('recent-chats');
-const achievedChatsContainer = document.getElementById('achieved-chats');
-const imageChatsContainer = document.getElementById('image-chats');
-const deletedChatsContainer = document.getElementById('deleted-chats');
 // New elements for advanced note taker
 const uploadNoteFile = document.getElementById('note-file');
 const uploadNoteBtn = document.getElementById('upload-note');
@@ -185,13 +178,6 @@ let streakCount = parseInt(localStorage.getItem('classConnectStreak') || '0');
 let lastActiveDate = localStorage.getItem('classConnectLastActive');
 let hasShownTodayNotification = false;
 let currentEvents = [...summativeEvents]; // Make it mutable
-// AI Assistant state
-let aiChats = {
-    recent: [],
-    achieved: [],
-    images: [],
-    deleted: []
-};
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -210,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNotesDisplay();
     checkStreakMilestone();
     updateWorkloadScan();
-    initializeAIScrollableSections();
 });
 
 // Streak System
@@ -669,16 +654,6 @@ function formatDate(date) {
 
 // Event Modal
 function initializeEventModal() {
-    // Update event subject dropdown to include Language
-    const eventSubjectOptions = `
-        <option value="math">Math</option>
-        <option value="science">Science</option>
-        <option value="english">English</option>
-        <option value="history">History</option>
-        <option value="language">Language</option>
-    `;
-    eventSubject.innerHTML = eventSubjectOptions;
-    
     if (eventCloseBtn) {
         eventCloseBtn.addEventListener('click', () => {
             eventModal.style.display = 'none';
@@ -739,7 +714,7 @@ function updateWorkloadScan() {
     if (scanItems[2]) scanItems[2].querySelector('.scan-value').textContent = `${futureCount} assessments`;
 }
 
-// Compact Notes Widget
+// Compact Notes Widget - Enhanced Accessibility and Compactness
 function initializeNotesWidget() {
     // Update subject dropdowns to include Language
     const subjectOptions = `
@@ -1078,171 +1053,6 @@ function initializeAIAssistant() {
     }
 }
 
-// Initialize AI Assistant Sections
-function initializeAIScrollableSections() {
-    // Add event listeners to section tabs
-    sectionTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs and panels
-            sectionTabs.forEach(t => t.classList.remove('active'));
-            sectionPanels.forEach(p => p.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            tab.classList.add('active');
-            
-            // Show corresponding panel
-            const sectionId = tab.getAttribute('data-section');
-            const panel = document.getElementById(`${sectionId}-section`);
-            if (panel) {
-                panel.classList.add('active');
-            }
-            
-            // Update content based on selected section
-            updateSectionContent(sectionId);
-        });
-    });
-    
-    // Initialize with recent section active
-    document.querySelector('.section-tab[data-section="recent"]').classList.add('active');
-    document.getElementById('recent-section').classList.add('active');
-    updateSectionContent('recent');
-}
-
-function updateSectionContent(sectionId) {
-    const container = document.getElementById(`${sectionId}-chats`);
-    if (!container) return;
-    
-    // Clear container
-    container.innerHTML = '';
-    
-    // Get data for the section
-    const sectionData = aiChats[sectionId];
-    
-    // Create items based on section type
-    if (sectionData.length === 0) {
-        container.innerHTML = `<div class="section-item">No items in this section yet</div>`;
-        return;
-    }
-    
-    sectionData.forEach((item, index) => {
-        const itemElement = document.createElement('div');
-        itemElement.className = 'section-item';
-        itemElement.textContent = `${index + 1}. ${item.title || item.query || 'Chat'}`;
-        itemElement.addEventListener('click', () => {
-            // Handle click on chat item
-            showChatDetail(item, sectionId);
-        });
-        container.appendChild(itemElement);
-    });
-}
-
-function showChatDetail(chatItem, sectionId) {
-    // For now, just log the chat item
-    console.log(`Showing details for chat in ${sectionId}:`, chatItem);
-    
-    // In a real app, you would show the full chat content
-    alert(`Chat details for: ${chatItem.title || chatItem.query}`);
-}
-
-function handleAIQuery() {
-    const query = aiInput.value.trim();
-    if (!query) return;
-    
-    // Create a new message element for the user's query
-    const userMessage = document.createElement('div');
-    userMessage.className = 'ai-message user-message';
-    userMessage.innerHTML = `<div class="message-content">${query}</div>`;
-    
-    // Create AI response container
-    const aiResponseDiv = document.createElement('div');
-    aiResponseDiv.className = 'ai-message ai-response';
-    aiResponseDiv.innerHTML = '<div class="message-content">🤔 Thinking...</div>';
-    
-    // Clear previous responses and add new conversation
-    aiResponse.innerHTML = '';
-    aiResponse.appendChild(userMessage);
-    aiResponse.appendChild(aiResponseDiv);
-    
-    // Add to recent chats
-    aiChats.recent.unshift({
-        id: Date.now(),
-        query: query,
-        timestamp: new Date().toLocaleString(),
-        module: currentAIModule
-    });
-    
-    // Process the query
-    setTimeout(() => {
-        const lowerQuery = query.toLowerCase();
-        let response = '';
-        let subject = detectSubjectFromText(query);
-        
-        // Handle any prompt gracefully with consistent responses
-        if (currentAIModule === 'homework') {
-            response = `I'd be happy to help with your ${subject} homework! Here's a step-by-step approach to solving problems like this:
-1. First, identify what type of problem this is
-2. Recall the relevant formulas or concepts
-3. Apply the concepts step by step
-4. Check your work for accuracy
-For your specific question about "${query}", I recommend starting with step 1. Would you like me to walk through a similar example?`;
-        } else if (currentAIModule === 'qna') {
-            response = `Great question about ${subject}! Here's a clear, detailed explanation:
-${getRandomExplanation(subject)}
-This concept is fundamental to understanding ${subject}. Would you like me to provide examples or dive deeper into any part?`;
-        } else if (currentAIModule === 'planner') {
-            response = `I'll help you create an effective study plan for ${subject}! Here's a personalized approach:
-• **Daily Goals**: Break down your material into manageable chunks
-• **Study Sessions**: 25-minute focused sessions with 5-minute breaks
-• **Review Schedule**: Review material after 1 day, 3 days, and 1 week
-• **Practice**: Include practice problems daily
-Based on your query "${query}", I suggest focusing on the most challenging topics first. Would you like me to create a detailed day-by-day schedule?`;
-        } else if (currentAIModule === 'exam') {
-            response = `Excellent! I'll help you prepare for your ${subject} exam. Here's what I recommend:
-1. **Diagnostic Test**: Take a quick 5-question quiz to identify weak areas
-2. **Targeted Review**: Focus on your weakest topics first
-3. **Practice Tests**: Take full-length practice exams under timed conditions
-4. **Review Mistakes**: Analyze every incorrect answer thoroughly
-For "${query}", I can generate a custom practice test right now. Just say "Generate practice test" and I'll create 10 questions tailored to your needs!`;
-        }
-        
-        // Update AI response with formatted answer
-        aiResponseDiv.innerHTML = `
-            <div class="message-content">
-                <div style="font-weight: bold; color: #5e72e4; margin-bottom: 10px;">AI ${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</div>
-                <div style="line-height: 1.6;">${response.replace(/\n/g, '<br>')}</div>
-            </div>
-        `;
-        
-        // Update recent section content
-        updateSectionContent('recent');
-    }, 1000);
-    
-    aiInput.value = '';
-    recordActivity();
-}
-
-function detectSubjectFromText(text) {
-    text = text.toLowerCase();
-    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'Math';
-    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'Science';
-    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'English';
-    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'History';
-    if (text.includes('language') || text.includes('french') || text.includes('spanish') || text.includes('german')) return 'Language';
-    return 'your subject';
-}
-
-function getRandomExplanation(subject) {
-    const explanations = {
-        'Math': 'Mathematical concepts build upon each other. Understanding foundational principles like algebra and geometry is crucial for solving more complex problems. Always show your work and check your answers.',
-        'Science': 'Science is about understanding how the natural world works through observation, experimentation, and evidence-based reasoning. Focus on understanding concepts rather than just memorizing facts.',
-        'English': 'English involves analyzing literature, developing writing skills, and understanding language structure. Practice reading critically and writing clearly to improve your skills.',
-        'History': 'History helps us understand how past events shape our present world. Focus on causes, effects, and connections between events rather than just dates and names.',
-        'Language': 'Language learning involves developing reading, writing, speaking, and listening skills. Practice regularly and immerse yourself in the language to improve.',
-        'your subject': 'Learning any subject requires consistent practice, active engagement, and seeking help when needed. Break complex topics into smaller parts and build your understanding step by step.'
-    };
-    return explanations[subject] || explanations['your subject'];
-}
-
 function updateModuleExamples() {
     const examples = {
         homework: {
@@ -1289,6 +1099,94 @@ function updateModuleExamples() {
             ${currentExamples.prompts.map(prompt => `<li>${prompt}</li>`).join('')}
         </ul>
     `;
+}
+
+function handleAIQuery() {
+    const query = aiInput.value.trim();
+    if (!query) return;
+    
+    // Create a new message element for the user's query
+    const userMessage = document.createElement('div');
+    userMessage.className = 'ai-message user-message';
+    userMessage.innerHTML = `<div class="message-content">${query}</div>`;
+    
+    // Create AI response container
+    const aiResponseDiv = document.createElement('div');
+    aiResponseDiv.className = 'ai-message ai-response';
+    aiResponseDiv.innerHTML = '<div class="message-content">🤔 Thinking...</div>';
+    
+    // Clear previous responses and add new conversation
+    aiResponse.innerHTML = '';
+    aiResponse.appendChild(userMessage);
+    aiResponse.appendChild(aiResponseDiv);
+    
+    // Process the query
+    setTimeout(() => {
+        const lowerQuery = query.toLowerCase();
+        let response = '';
+        let subject = detectSubjectFromText(query);
+        
+        // Handle any prompt gracefully with consistent responses
+        if (currentAIModule === 'homework') {
+            response = `I'd be happy to help with your ${subject} homework! Here's a step-by-step approach to solving problems like this:
+1. First, identify what type of problem this is
+2. Recall the relevant formulas or concepts
+3. Apply the concepts step by step
+4. Check your work for accuracy
+For your specific question about "${query}", I recommend starting with step 1. Would you like me to walk through a similar example?`;
+        } else if (currentAIModule === 'qna') {
+            response = `Great question about ${subject}! Here's a clear, detailed explanation:
+${getRandomExplanation(subject)}
+This concept is fundamental to understanding ${subject}. Would you like me to provide examples or dive deeper into any part?`;
+        } else if (currentAIModule === 'planner') {
+            response = `I'll help you create an effective study plan for ${subject}! Here's a personalized approach:
+• **Daily Goals**: Break down your material into manageable chunks
+• **Study Sessions**: 25-minute focused sessions with 5-minute breaks
+• **Review Schedule**: Review material after 1 day, 3 days, and 1 week
+• **Practice**: Include practice problems daily
+Based on your query "${query}", I suggest focusing on the most challenging topics first. Would you like me to create a detailed day-by-day schedule?`;
+        } else if (currentAIModule === 'exam') {
+            response = `Excellent! I'll help you prepare for your ${subject} exam. Here's what I recommend:
+1. **Diagnostic Test**: Take a quick 5-question quiz to identify weak areas
+2. **Targeted Review**: Focus on your weakest topics first
+3. **Practice Tests**: Take full-length practice exams under timed conditions
+4. **Review Mistakes**: Analyze every incorrect answer thoroughly
+For "${query}", I can generate a custom practice test right now. Just say "Generate practice test" and I'll create 10 questions tailored to your needs!`;
+        }
+        
+        // Update AI response with formatted answer
+        aiResponseDiv.innerHTML = `
+            <div class="message-content">
+                <div style="font-weight: bold; color: #5e72e4; margin-bottom: 10px;">AI ${currentAIModule.charAt(0).toUpperCase() + currentAIModule.slice(1)}:</div>
+                <div style="line-height: 1.6;">${response.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+    }, 1000);
+    
+    aiInput.value = '';
+    recordActivity();
+}
+
+function detectSubjectFromText(text) {
+    text = text.toLowerCase();
+    if (text.includes('math') || text.includes('equation') || text.includes('algebra')) return 'Math';
+    if (text.includes('science') || text.includes('biology') || text.includes('chemistry')) return 'Science';
+    if (text.includes('english') || text.includes('literature') || text.includes('writing')) return 'English';
+    if (text.includes('history') || text.includes('geography') || text.includes('social')) return 'History';
+    if (text.includes('language') || text.includes('french') || text.includes('spanish') || text.includes('german')) return 'Language';
+    return 'your subject';
+}
+
+function getRandomExplanation(subject) {
+    const explanations = {
+        'Math': 'Mathematical concepts build upon each other. Understanding foundational principles like algebra and geometry is crucial for solving more complex problems. Always show your work and check your answers.',
+        'Science': 'Science is about understanding how the natural world works through observation, experimentation, and evidence-based reasoning. Focus on understanding concepts rather than just memorizing facts.',
+        'English': 'English involves analyzing literature, developing writing skills, and understanding language structure. Practice reading critically and writing clearly to improve your skills.',
+        'History': 'History helps us understand how past events shape our present world. Focus on causes, effects, and connections between events rather than just dates and names.',
+        'Language': 'Language learning involves developing reading, writing, speaking, and listening skills. Practice regularly and immerse yourself in the language to improve.',
+        'your subject': 'Learning any subject requires consistent practice, active engagement, and seeking help when needed. Break complex topics into smaller parts and build your understanding step by step.'
+    };
+    return explanations[subject] || explanations['your subject'];
 }
 
 // Notes Page
@@ -1422,7 +1320,7 @@ function renderNotesBySubject(searchTerm = '') {
         btn.addEventListener('click', function() {
             const noteId = parseInt(this.getAttribute('data-id'));
             savedNotes = savedNotes.filter(note => note.id !== noteId);
-            localStorage.setItem('classConnectNotes', JSON.stringify(savedNotes));
+            localStorage.setItem('ClassConnectNotes', JSON.stringify(savedNotes));
             renderNotesBySubject(searchTerm);
             updateNotesDisplay();
             recordActivity();
